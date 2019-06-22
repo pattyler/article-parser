@@ -2,6 +2,7 @@ package io.github.patfromthe90s.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,11 +18,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
+
 public class SimpleSiteDaoTest {
 	
 	private static final String EXISTENT_URL = "http://www.google.com";
 	private static final String NON_EXISTENT_URL = "http://www.i-dont-exist-in-the-database.com";
 	private static final String DATE = "1990-06-23T14:54:23";
+	private static final String THROWS_EXCEPTION_FAIL_MSG = "URL not existing in database should thrown an exception";
 	private SiteDao simpleSiteDao;
 	
 	// Mocked variables
@@ -49,14 +53,19 @@ public class SimpleSiteDaoTest {
 	public void testGetLastUpdatedSuccess() throws MalformedURLException, SQLException {
 		// begin mock setup
 		Mockito.when(pStatement.executeQuery()).thenReturn(rs);
+		Mockito.when(rs.next()).thenReturn(true);
 		Mockito.when(rs.getString(1)).thenReturn(DATE);
 		// end mock setup
 		
 		URL url = new URL(EXISTENT_URL);
-		LocalDateTime ldt = simpleSiteDao.getLastUpdated(url);
-		Mockito.verify(pStatement).setString(1, EXISTENT_URL);
-		Mockito.verify(pStatement).executeQuery();
-		assertEquals(ldt, LocalDateTime.parse(DATE));
+		try {
+			LocalDateTime ldt = simpleSiteDao.getLastUpdated(url);
+			Mockito.verify(pStatement).setString(1, EXISTENT_URL);
+			Mockito.verify(pStatement).executeQuery();
+			assertEquals(ldt, LocalDateTime.parse(DATE));
+		} catch (RecordNotInDatabaseException e) {
+			fail();
+		}
 	}
 	
 	@Test
@@ -69,7 +78,9 @@ public class SimpleSiteDaoTest {
 		
 		
 		URL url = new URL(NON_EXISTENT_URL);
-		assertThrows(SQLException.class, () -> simpleSiteDao.getLastUpdated(url), "URL not existing in database should thrown an exception");
+		assertThrows(RecordNotInDatabaseException.class, 
+						() -> simpleSiteDao.getLastUpdated(url),
+						THROWS_EXCEPTION_FAIL_MSG);
 	}
 	
 	@Test
@@ -80,11 +91,14 @@ public class SimpleSiteDaoTest {
 		
 		URL url = new URL(EXISTENT_URL);
 		LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
-		boolean updated = simpleSiteDao.updateLastUpdated(url, newLastUpdated);
-		Mockito.verify(pStatement).setString(1, DATE);
-		Mockito.verify(pStatement).setString(2, EXISTENT_URL);
-		Mockito.verify(pStatement).executeUpdate();
-		assertEquals(true, updated);
+		try {
+			simpleSiteDao.updateLastUpdated(url, newLastUpdated);
+			Mockito.verify(pStatement).setString(1, DATE);
+			Mockito.verify(pStatement).setString(2, EXISTENT_URL);
+			Mockito.verify(pStatement).executeUpdate();
+		} catch (RecordNotInDatabaseException e) {
+			fail();
+		}
 	}
 	
 	@Test
@@ -95,8 +109,9 @@ public class SimpleSiteDaoTest {
 		
 		URL url = new URL(NON_EXISTENT_URL);
 		LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
-		boolean updated = simpleSiteDao.updateLastUpdated(url, newLastUpdated);
-		assertEquals(false, updated);
+		assertThrows(RecordNotInDatabaseException.class, 
+						() -> simpleSiteDao.updateLastUpdated(url, newLastUpdated),
+						THROWS_EXCEPTION_FAIL_MSG);
 	}
 
 }

@@ -157,3 +157,5 @@ buildNumber.properties
 
 .classpath
 .project
+
+src/main/java/io/github/patfromthe90s/testing

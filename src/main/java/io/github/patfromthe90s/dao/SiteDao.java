@@ -4,6 +4,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
+
 /**
  * DAO for accessing the Site table in the database.
  * 
@@ -18,10 +20,11 @@ public interface SiteDao {
 	 * Assumes {@code url} is a valid database entry.
 	 * 
 	 * @param url {@link URL} representing site to retrieve the information from.
-	 * @throws SQLException if the given {@code url} doesn't exist in the database, or some other unexpected reason.
 	 * @return Last known time the given site was updated.
+	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
+	 * @throws SQLException If there is some underlying problem.
 	 */
-	public LocalDateTime getLastUpdated(URL url) throws SQLException;
+	public LocalDateTime getLastUpdated(URL url) throws RecordNotInDatabaseException, SQLException;
 	
 	/**
 	 * Associate the given {@code url} in the database with {@code newLastUpdated}.<br/>
@@ -31,8 +34,9 @@ public interface SiteDao {
 	 * @param url {@link URL} representing site to update.
 	 * @param newLastUpdated New {@code lastUpdated} time to insert into the database.
 	 * @return 
-	 * @throws SQLException if the given {@code url} doesn't exist in the database, or some other unexpected reason.
+	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
+	 * @throws SQLException If there is some underlying problem.
 	 */
-	public boolean updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws SQLException;
+	public void updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException;
 
 }

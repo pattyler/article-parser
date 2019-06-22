@@ -7,7 +7,7 @@ package io.github.patfromthe90s.util;
  */
 public class SQLQueries {
 
-	public static final String GET_LAST_UPDATED = "SELECT lastUpdated FROM site WHERE sireUrl = ?;";
+	public static final String GET_LAST_UPDATED = "SELECT lastUpdated FROM site WHERE siteUrl = ?;";
 	public static final String UPDATE_LAST_UPDATED = "UPDATE site SET lastUpdated = ? WHERE siteUrl = ?;";
 	
 }

@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 import javax.sql.DataSource;
 
+import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
+import io.github.patfromthe90s.util.Messages;
 import io.github.patfromthe90s.util.SQLQueries;
 
 /**
@@ -28,20 +30,25 @@ public class SimpleSiteDao implements SiteDao {
 		this.dataSource = dataSource;
 	}
 
-	public LocalDateTime getLastUpdated(URL url) throws SQLException {
+	@Override
+	public LocalDateTime getLastUpdated(URL url) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = getPreparedStatement(SQLQueries.GET_LAST_UPDATED);
 		ps.setString(1, url.toString()); 
 		ResultSet rs = ps.executeQuery();
-		rs.next();
-		return LocalDateTime.parse(rs.getString(1));
+		if (rs.next())
+			return LocalDateTime.parse(rs.getString(1));
+		else
+			throw new RecordNotInDatabaseException(Messages.DB_NO_RECORD);
 	}
 	
-	public boolean updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws SQLException {
+	@Override
+	public void updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException{
 		PreparedStatement ps = getPreparedStatement(SQLQueries.UPDATE_LAST_UPDATED);
 		ps.setString(1, newLastUpdated.toString());
 		ps.setString(2, url.toString());
 		int numUpdated = ps.executeUpdate();
-		return numUpdated > 0;
+		if (numUpdated < 1)
+			throw new RecordNotInDatabaseException(Messages.DB_NO_RECORD);
 	}
 	
 	private PreparedStatement getPreparedStatement(String query) throws SQLException {
