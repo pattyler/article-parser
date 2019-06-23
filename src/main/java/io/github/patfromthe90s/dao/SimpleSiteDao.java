@@ -19,7 +19,7 @@ import io.github.patfromthe90s.util.SQLQueries;
  * @author Patrick
  *
  */
-public class SimpleSiteDao implements SiteDao {
+public final class SimpleSiteDao implements SiteDao {
 	
 	private final DataSource dataSource;
 	
@@ -42,7 +42,7 @@ public class SimpleSiteDao implements SiteDao {
 	}
 	
 	@Override
-	public void updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException{
+	public void updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = getPreparedStatement(SQLQueries.UPDATE_LAST_UPDATED);
 		ps.setString(1, newLastUpdated.toString());
 		ps.setString(2, url.toString());

@@ -33,7 +33,6 @@ public interface SiteDao {
 	 * 
 	 * @param url {@link URL} representing site to update.
 	 * @param newLastUpdated New {@code lastUpdated} time to insert into the database.
-	 * @return 
 	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
 	 * @throws SQLException If there is some underlying problem.
 	 */
