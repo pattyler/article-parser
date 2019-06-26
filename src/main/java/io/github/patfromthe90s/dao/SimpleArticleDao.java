@@ -29,6 +29,8 @@ public final class SimpleArticleDao implements ArticleDao {
 		List<Article> articles = new ArrayList<>();
 		Connection conn = dataSource.getConnection();
 		PreparedStatement ps = conn.prepareStatement(SQLQueries.GET_ARTICLE);
+		ps.setString(1, from.toString());
+		ps.setString(2, to.toString());
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			try {

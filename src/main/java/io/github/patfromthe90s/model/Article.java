@@ -90,6 +90,12 @@ public final class Article {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		// Generated method
+		return "Article [url=" + url + ", date=" + date + ", data=" + data + "]";
+	}
 	
 	
 	
