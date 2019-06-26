@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
 
 /**
- * DAO for accessing the Site table in the database.
+ * DAO interface for accessing the Site table in the database.
  * 
  * @author Patrick
  *
