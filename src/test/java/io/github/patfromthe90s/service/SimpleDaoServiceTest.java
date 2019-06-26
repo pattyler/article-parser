@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -22,6 +24,7 @@ import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
  * @author Patrick
  *
  */
+@DisplayName("Test SimpleDAOServce")
 public class SimpleDaoServiceTest {
 	
 	private SiteDao mSiteDao;
@@ -43,52 +46,66 @@ public class SimpleDaoServiceTest {
 		url = new URL(VALID_URL);
 	}
 	
-	@Test
-	public void testLastUpdatedReturned() throws RecordNotInDatabaseException, SQLException, DaoServiceException {
-		// being mock setup
-		Mockito.when(mSiteDao.getLastUpdated(Mockito.any(URL.class))).thenReturn(VALID_DATE);
-		// end mock setup
+	@Nested
+	@DisplayName("A value is returned")
+	class ValuesReturned {
 		
-		LocalDateTime returnedDate = simpleDaoService.getLastUpdated(url);
-		assertEquals(VALID_DATE, returnedDate);
+		@Test
+		@DisplayName("From getLastUpdated()")
+		public void testLastUpdatedReturned() throws RecordNotInDatabaseException, SQLException, DaoServiceException {
+			// being mock setup
+			Mockito.when(mSiteDao.getLastUpdated(Mockito.any(URL.class))).thenReturn(VALID_DATE);
+			// end mock setup
+			
+			LocalDateTime returnedDate = simpleDaoService.getLastUpdated(url);
+			assertEquals(VALID_DATE, returnedDate);
+		}
 	}
 	
-	@Test
-	public void testExceptionGetLastUpdatedException() throws RecordNotInDatabaseException, SQLException {
-		// being mock setup
-		Mockito.when(mSiteDao.getLastUpdated(Mockito.any(URL.class))).thenThrow(RecordNotInDatabaseException.class);
-		// end mock setup
+	@Nested
+	@DisplayName("Correct exceptions are thrown")
+	class ExceptionsThrown {
 		
-		assertThrows(DaoServiceException.class, 
-				() -> simpleDaoService.getLastUpdated(url),
-				ASSERT_THROWS_FAIL_MSG);
+		@Test
+		@DisplayName("From getLastUpdated()")
+		public void testExceptionGetLastUpdatedException() throws RecordNotInDatabaseException, SQLException {
+			// being mock setup
+			Mockito.when(mSiteDao.getLastUpdated(Mockito.any(URL.class))).thenThrow(RecordNotInDatabaseException.class);
+			// end mock setup
+			
+			assertThrows(DaoServiceException.class, 
+					() -> simpleDaoService.getLastUpdated(url),
+					ASSERT_THROWS_FAIL_MSG);
+			
+			// being mock setup
+			Mockito.when(mSiteDao.getLastUpdated(Mockito.any(URL.class))).thenThrow(SQLException.class);
+			// end mock setup
+			
+			assertThrows(DaoServiceException.class, 
+					() ->  simpleDaoService.getLastUpdated(url),
+					ASSERT_THROWS_FAIL_MSG);
+		}
 		
-		// being mock setup
-		Mockito.when(mSiteDao.getLastUpdated(Mockito.any(URL.class))).thenThrow(SQLException.class);
-		// end mock setup
-		
-		assertThrows(DaoServiceException.class, 
-				() ->  simpleDaoService.getLastUpdated(url),
-				ASSERT_THROWS_FAIL_MSG);
+		@Test
+		@DisplayName("From updateLastUpdated()")
+		public void testUpdateLastUpdatedException() throws MalformedURLException, SQLException, RecordNotInDatabaseException {
+			// being mock setup
+			Mockito.doThrow(RecordNotInDatabaseException.class).when(mSiteDao).updateLastUpdated(url, VALID_DATE);
+			// end mock setup
+			
+			assertThrows(DaoServiceException.class, 
+					() -> simpleDaoService.updateLastUpdated(url, VALID_DATE),
+					ASSERT_THROWS_FAIL_MSG);
+			
+			// being mock setup
+			Mockito.doThrow(SQLException.class).when(mSiteDao).updateLastUpdated(url, VALID_DATE);
+			// end mock setup
+			
+			assertThrows(DaoServiceException.class, 
+					() -> simpleDaoService.updateLastUpdated(url, VALID_DATE),
+					ASSERT_THROWS_FAIL_MSG);
+		}
 	}
-	
-	@Test
-	public void testUpdateLastUpdatedException() throws MalformedURLException, SQLException, RecordNotInDatabaseException {
-		// being mock setup
-		Mockito.doThrow(RecordNotInDatabaseException.class).when(mSiteDao).updateLastUpdated(url, VALID_DATE);
-		// end mock setup
-		
-		assertThrows(DaoServiceException.class, 
-				() -> simpleDaoService.updateLastUpdated(url, VALID_DATE),
-				ASSERT_THROWS_FAIL_MSG);
-		
-		// being mock setup
-		Mockito.doThrow(SQLException.class).when(mSiteDao).updateLastUpdated(url, VALID_DATE);
-		// end mock setup
-		
-		assertThrows(DaoServiceException.class, 
-				() -> simpleDaoService.updateLastUpdated(url, VALID_DATE),
-				ASSERT_THROWS_FAIL_MSG);
-	}
+
 
 }

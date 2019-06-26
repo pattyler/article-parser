@@ -15,11 +15,14 @@ import java.time.LocalDateTime;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
 
+@DisplayName("Test the logic in SimpleSiteDao")
 public class SimpleSiteDaoTest {
 	
 	private static final String EXISTENT_URL = "http://www.google.com";
@@ -49,69 +52,87 @@ public class SimpleSiteDaoTest {
 		simpleSiteDao = new SimpleSiteDao(dataSource);
 	}
 	
-	@Test
-	public void testGetLastUpdatedSuccess() throws MalformedURLException, SQLException {
-		// begin mock setup
-		Mockito.when(pStatement.executeQuery()).thenReturn(rs);
-		Mockito.when(rs.next()).thenReturn(true);
-		Mockito.when(rs.getString(1)).thenReturn(DATE);
-		// end mock setup
+	@Nested
+	@DisplayName("Success when the parameters are valid")
+	class Success {
 		
-		URL url = new URL(EXISTENT_URL);
-		try {
-			LocalDateTime ldt = simpleSiteDao.getLastUpdated(url);
-			Mockito.verify(pStatement).setString(1, EXISTENT_URL);
-			Mockito.verify(pStatement).executeQuery();
-			assertEquals(ldt, LocalDateTime.parse(DATE));
-		} catch (RecordNotInDatabaseException e) {
-			fail();
+		@Test
+		@DisplayName("For getLastUpdated()")
+		public void testGetLastUpdatedSuccess() throws MalformedURLException, SQLException {
+			// begin mock setup
+			Mockito.when(pStatement.executeQuery()).thenReturn(rs);
+			Mockito.when(rs.next()).thenReturn(true);
+			Mockito.when(rs.getString(1)).thenReturn(DATE);
+			// end mock setup
+			
+			URL url = new URL(EXISTENT_URL);
+			try {
+				LocalDateTime ldt = simpleSiteDao.getLastUpdated(url);
+				Mockito.verify(pStatement).setString(1, EXISTENT_URL);
+				Mockito.verify(pStatement).executeQuery();
+				assertEquals(ldt, LocalDateTime.parse(DATE));
+			} catch (RecordNotInDatabaseException e) {
+				fail();
+			}
 		}
-	}
-	
-	@Test
-	public void testGetLastUpdatedEmpty() throws MalformedURLException, SQLException {
-		// begin mock setup
-		Mockito.when(pStatement.executeQuery()).thenReturn(rs);
-		Mockito.when(rs.next()).thenReturn(false);
-		Mockito.when(rs.getString(Mockito.anyInt())).thenThrow(new SQLException());
-		// end mock setup
 		
-		
-		URL url = new URL(NON_EXISTENT_URL);
-		assertThrows(RecordNotInDatabaseException.class, 
-						() -> simpleSiteDao.getLastUpdated(url),
-						THROWS_EXCEPTION_FAIL_MSG);
-	}
-	
-	@Test
-	public void testUpdateLastUpdatedSuccess() throws MalformedURLException, SQLException {
-		// begin mock setup
-		Mockito.when(pStatement.executeUpdate()).thenReturn(1);
-		// end mock setup
-		
-		URL url = new URL(EXISTENT_URL);
-		LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
-		try {
-			simpleSiteDao.updateLastUpdated(url, newLastUpdated);
-			Mockito.verify(pStatement).setString(1, DATE);
-			Mockito.verify(pStatement).setString(2, EXISTENT_URL);
-			Mockito.verify(pStatement).executeUpdate();
-		} catch (RecordNotInDatabaseException e) {
-			fail();
+		@Test
+		@DisplayName("For updateLastUpdated()")
+		public void testUpdateLastUpdatedSuccess() throws MalformedURLException, SQLException {
+			// begin mock setup
+			Mockito.when(pStatement.executeUpdate()).thenReturn(1);
+			// end mock setup
+			
+			URL url = new URL(EXISTENT_URL);
+			LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
+			try {
+				simpleSiteDao.updateLastUpdated(url, newLastUpdated);
+				Mockito.verify(pStatement).setString(1, DATE);
+				Mockito.verify(pStatement).setString(2, EXISTENT_URL);
+				Mockito.verify(pStatement).executeUpdate();
+			} catch (RecordNotInDatabaseException e) {
+				fail();
+			}
 		}
+		
 	}
 	
-	@Test
-	public void testUpdateLastUpdatedFailWrongUrl() throws MalformedURLException, SQLException {
-		// begin mock setup
-		Mockito.when(pStatement.executeUpdate()).thenReturn(0);
-		// end mock setup
-		
-		URL url = new URL(NON_EXISTENT_URL);
-		LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
-		assertThrows(RecordNotInDatabaseException.class, 
-						() -> simpleSiteDao.updateLastUpdated(url, newLastUpdated),
-						THROWS_EXCEPTION_FAIL_MSG);
+	@Nested
+	@DisplayName("Exceptions are thrown correctly")
+	class ExceptionsThrown {
+		@Nested
+		@DisplayName("When URL is not in the database")
+		class URLNotInDb {
+			@Test
+			@DisplayName("in getLastUpdated()")
+			public void testGetLastUpdatedEmpty() throws MalformedURLException, SQLException {
+				// begin mock setup
+				Mockito.when(pStatement.executeQuery()).thenReturn(rs);
+				Mockito.when(rs.next()).thenReturn(false);
+				Mockito.when(rs.getString(Mockito.anyInt())).thenThrow(new SQLException());
+				// end mock setup
+				
+				
+				URL url = new URL(NON_EXISTENT_URL);
+				assertThrows(RecordNotInDatabaseException.class, 
+								() -> simpleSiteDao.getLastUpdated(url),
+								THROWS_EXCEPTION_FAIL_MSG);
+			}
+			
+			@Test
+			@DisplayName("in updateLastUpdated()")
+			public void testUpdateLastUpdatedFailWrongUrl() throws MalformedURLException, SQLException {
+				// begin mock setup
+				Mockito.when(pStatement.executeUpdate()).thenReturn(0);
+				// end mock setup
+				
+				URL url = new URL(NON_EXISTENT_URL);
+				LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
+				assertThrows(RecordNotInDatabaseException.class, 
+								() -> simpleSiteDao.updateLastUpdated(url, newLastUpdated),
+								THROWS_EXCEPTION_FAIL_MSG);
+			}
+		}
 	}
 
 }
