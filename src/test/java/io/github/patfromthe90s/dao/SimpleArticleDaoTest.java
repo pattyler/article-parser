@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -58,8 +60,8 @@ public class SimpleArticleDaoTest {
 			final String TEST_DATA = "test";
 			final URL URL = new URL("http://test.com");
 			final LocalDateTime ARTICLE_DATE = LocalDateTime.of(1995, 8, 24, 23, 40);
-			final LocalDateTime FROM = LocalDateTime.of(1990, 8, 24, 23, 40);
-			final LocalDateTime TO = LocalDateTime.of(2015, 06, 24, 23, 15);
+			final ZonedDateTime FROM = ZonedDateTime.of(LocalDateTime.of(1990, 8, 24, 23, 40), ZoneId.of("UTC"));
+			final ZonedDateTime TO = ZonedDateTime.of(LocalDateTime.of(2015, 06, 24, 23, 15), ZoneId.of("UTC"));
 			final Article EXPECTED_ARTICLE = Article.create()
 											.setData(TEST_DATA)
 											.setDate(ARTICLE_DATE)
@@ -83,8 +85,8 @@ public class SimpleArticleDaoTest {
 		@Test
 		public void testGetArticlesBetweenEmpty() throws MalformedURLException, SQLException {
 			// begin data setup
-			final LocalDateTime FROM = LocalDateTime.of(1990, 8, 24, 23, 40);
-			final LocalDateTime TO = LocalDateTime.of(2015, 06, 24, 23, 15);
+			final ZonedDateTime FROM = ZonedDateTime.of(LocalDateTime.of(11990, 8, 24, 23, 40), ZoneId.of("UTC"));
+			final ZonedDateTime TO = ZonedDateTime.of(LocalDateTime.of(12015, 06, 24, 23, 15), ZoneId.of("UTC"));
 			// end data setup
 			
 			// begin mock setup

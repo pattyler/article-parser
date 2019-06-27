@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import javax.sql.DataSource;
 
@@ -67,10 +69,10 @@ public class SimpleSiteDaoTest {
 			
 			URL url = new URL(EXISTENT_URL);
 			try {
-				LocalDateTime ldt = simpleSiteDao.getLastUpdated(url);
+				ZonedDateTime zdt = simpleSiteDao.getLastUpdated(url);
 				Mockito.verify(pStatement).setString(1, EXISTENT_URL);
 				Mockito.verify(pStatement).executeQuery();
-				assertEquals(ldt, LocalDateTime.parse(DATE));
+				assertEquals(zdt, ZonedDateTime.of(LocalDateTime.parse(DATE), ZoneId.of("UTC")));
 			} catch (RecordNotInDatabaseException e) {
 				fail();
 			}
@@ -84,7 +86,7 @@ public class SimpleSiteDaoTest {
 			// end mock setup
 			
 			URL url = new URL(EXISTENT_URL);
-			LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
+			ZonedDateTime newLastUpdated = ZonedDateTime.of(LocalDateTime.parse(DATE), ZoneId.of("UTC"));
 			try {
 				simpleSiteDao.updateLastUpdated(url, newLastUpdated);
 				Mockito.verify(pStatement).setString(1, DATE);
@@ -127,7 +129,7 @@ public class SimpleSiteDaoTest {
 				// end mock setup
 				
 				URL url = new URL(NON_EXISTENT_URL);
-				LocalDateTime newLastUpdated = LocalDateTime.parse(DATE);
+				ZonedDateTime newLastUpdated = ZonedDateTime.of(LocalDateTime.parse(DATE), ZoneId.of("UTC"));
 				assertThrows(RecordNotInDatabaseException.class, 
 								() -> simpleSiteDao.updateLastUpdated(url, newLastUpdated),
 								THROWS_EXCEPTION_FAIL_MSG);

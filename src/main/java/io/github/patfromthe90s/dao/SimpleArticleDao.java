@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +26,12 @@ public final class SimpleArticleDao implements ArticleDao {
 	}
 
 	@Override
-	public List<Article> getArticlesBetween(LocalDateTime from, LocalDateTime to) throws SQLException {
+	public List<Article> getArticlesBetween(ZonedDateTime from, ZonedDateTime to) throws SQLException {
 		List<Article> articles = new ArrayList<>();
 		Connection conn = dataSource.getConnection();
 		PreparedStatement ps = conn.prepareStatement(SQLQueries.GET_ARTICLE);
-		ps.setString(1, from.toString());
-		ps.setString(2, to.toString());
+		ps.setString(1, from.toLocalDateTime().toString());
+		ps.setString(2, to.toLocalDateTime().toString());
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			try {

@@ -2,7 +2,7 @@ package io.github.patfromthe90s.dao;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
 
@@ -24,7 +24,7 @@ public interface SiteDao {
 	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
 	 * @throws SQLException If there is some underlying problem.
 	 */
-	public LocalDateTime getLastUpdated(URL url) throws RecordNotInDatabaseException, SQLException;
+	public ZonedDateTime getLastUpdated(URL url) throws RecordNotInDatabaseException, SQLException;
 	
 	/**
 	 * Associate the given {@code url} in the database with {@code newLastUpdated}.<br/>
@@ -36,6 +36,6 @@ public interface SiteDao {
 	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
 	 * @throws SQLException If there is some underlying problem.
 	 */
-	public void updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException;
+	public void updateLastUpdated(URL url, ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException;
 
 }

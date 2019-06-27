@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +40,9 @@ public class SimpleDaoServiceTest {
 	private URL url;
 	
 	private static final String ASSERT_THROWS_FAIL_MSG = "All exceptions should be mapped to DaoServiceException";
-	private final String STR_DATE = "2004-05-24T14:14:00";
-	private final LocalDateTime VALID_DATE = LocalDateTime.parse(STR_DATE);
+	private final String STR_DATE = "Mon, 24 Jun 2019 16:00:00 GMT";
+	private final ZonedDateTime VALID_DATE = ZonedDateTime.parse(STR_DATE, DateTimeFormatter.RFC_1123_DATE_TIME)
+														.withZoneSameInstant(ZoneId.of("UTC"));
 	private final String VALID_URL = "http://www.google.com";
 	
 	@BeforeEach
@@ -64,7 +67,7 @@ public class SimpleDaoServiceTest {
 			Mockito.when(mSiteDao.getLastUpdated(Mockito.any(URL.class))).thenReturn(VALID_DATE);
 			// end mock setup
 			
-			LocalDateTime returnedDate = simpleDaoService.getLastUpdated(url);
+			ZonedDateTime returnedDate = simpleDaoService.getLastUpdated(url);
 			assertEquals(VALID_DATE, returnedDate);
 		}
 		
@@ -76,7 +79,7 @@ public class SimpleDaoServiceTest {
 			ARTICLES.add(Article.create());
 			Mockito.doReturn(ARTICLES)
 				.when(mArticleDao)
-				.getArticlesBetween(Mockito.any(LocalDateTime.class), Mockito.any(LocalDateTime.class));
+				.getArticlesBetween(Mockito.any(ZonedDateTime.class), Mockito.any(ZonedDateTime.class));
 			// end mock setup
 			
 			List<Article> returnedArticles = simpleDaoService.getArticlesBetween(VALID_DATE, VALID_DATE);
