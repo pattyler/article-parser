@@ -2,6 +2,7 @@ package io.github.patfromthe90s.dao;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import io.github.patfromthe90s.model.Article;
@@ -21,7 +22,7 @@ public interface ArticleDao {
 	 * @return	Any articles written between {@code from} and {@code to}.
 	 * @throws SQLException if something went wrong.
 	 */
-	public List<Article> getArticlesBetween(LocalDateTime from, LocalDateTime to) throws SQLException;
+	public List<Article> getArticlesBetween(ZonedDateTime from, ZonedDateTime to) throws SQLException;
 	
 	/**
 	 * Attempts to insert the given {@code article} into the database. No guarantees are made.

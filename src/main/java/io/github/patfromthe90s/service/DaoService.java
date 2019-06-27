@@ -3,6 +3,7 @@ package io.github.patfromthe90s.service;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import io.github.patfromthe90s.exception.DaoServiceException;
@@ -24,29 +25,31 @@ public interface DaoService {
 	 * @throws DaoServiceException if the {@code url} doesn't exist in the database, or if something else
 	 * went wrong related to the database.
 	 */
-	public LocalDateTime getLastUpdated(URL url) throws DaoServiceException;
+	public ZonedDateTime getLastUpdated(URL url) throws DaoServiceException;
 	
 	
 	/**
 	 * Associate the given {@code url} with {@code newLastUpdated}.<br/>
-	 * Assumes {@code newLastUpdated} is more recent than the current value in the database.
+	 * Assumes {@code newLastUpdated} is more recent than the current value in the database. <br/>
+	 * <code>newLastUpdated</code> is converted to UTC if it is not already.
 	 * 
 	 * @param url {@link URL} representing site to update.
 	 * @param newLastUpdated New {@code lastUpdated} time to insert.
 	 * @throws DaoServiceException if the {@code url} doesn't exist in the database, or if something else
 	 * went wrong related to the database.
 	 */
-	public void updateLastUpdated(URL url, LocalDateTime newLastUpdated) throws DaoServiceException;
+	public void updateLastUpdated(URL url, ZonedDateTime newLastUpdated) throws DaoServiceException;
 	
 	/**
-	 * Returns any articles that were written between {@code from} (inclusive) and {@code to} (inclusive).
+	 * Returns any articles that were written between {@code from} (inclusive) and {@code to} (inclusive). <br/>
+	 * Both <code>from</code> and <code>to</code> are converted to UTC if they are not already.
 	 * 
 	 * @param from The date to search from (inclusive).
 	 * @param to The date to search until (inclusive).
 	 * @return	Any articles written between {@code from} and {@code to}.
 	 * @throws SQLException if something went wrong.
 	 */
-	public List<Article> getArticlesBetween(LocalDateTime from, LocalDateTime to) throws DaoServiceException;
+	public List<Article> getArticlesBetween(ZonedDateTime from, ZonedDateTime to) throws DaoServiceException;
 	
 	/**
 	 * Attempts to insert the given {@code article} into the database. No guarantees are made.
