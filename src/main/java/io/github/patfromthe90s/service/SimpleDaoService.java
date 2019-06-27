@@ -22,13 +22,13 @@ public final class SimpleDaoService implements DaoService {
 	private final SiteDao siteDao;
 	private final ArticleDao articleDao;
 	
-	public SimpleDaoService(SiteDao siteDao, ArticleDao articleDao) {
+	public SimpleDaoService(final SiteDao siteDao, final ArticleDao articleDao) {
 		this.siteDao = siteDao;
 		this.articleDao = articleDao;
 	}
 
 	@Override
-	public ZonedDateTime getLastUpdated(URL url) throws DaoServiceException {
+	public ZonedDateTime getLastUpdated(final URL url) throws DaoServiceException {
 		try {
 			return siteDao.getLastUpdated(url);
 		} catch (RecordNotInDatabaseException | SQLException e) {
@@ -38,7 +38,7 @@ public final class SimpleDaoService implements DaoService {
 	}
 
 	@Override
-	public void updateLastUpdated(URL url, ZonedDateTime newLastUpdated) throws DaoServiceException {
+	public void updateLastUpdated(final URL url, ZonedDateTime newLastUpdated) throws DaoServiceException {
 		try {
 			newLastUpdated = newLastUpdated.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
 			siteDao.updateLastUpdated(url, newLastUpdated);
@@ -61,7 +61,7 @@ public final class SimpleDaoService implements DaoService {
 	}
 
 	@Override
-	public void insertArticle(Article article) throws DaoServiceException {
+	public void insertArticle(final Article article) throws DaoServiceException {
 		try {
 			articleDao.insertArticle(article);
 		} catch (SQLException e) {

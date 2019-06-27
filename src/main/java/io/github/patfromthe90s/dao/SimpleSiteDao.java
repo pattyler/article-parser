@@ -29,12 +29,12 @@ public final class SimpleSiteDao implements SiteDao {
 	/**
 	 * @param dataSource The {@link DataSource} for retrieving the database {@link Connection}.
 	 */
-	public SimpleSiteDao(DataSource dataSource) {
+	public SimpleSiteDao(final DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
 	@Override
-	public ZonedDateTime getLastUpdated(URL url) throws RecordNotInDatabaseException, SQLException {
+	public ZonedDateTime getLastUpdated(final URL url) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.GET_LAST_UPDATED);
 		ps.setString(1, url.toString()); 
 		ResultSet rs = ps.executeQuery();
@@ -47,11 +47,11 @@ public final class SimpleSiteDao implements SiteDao {
 	}
 	
 	@Override
-	public void updateLastUpdated(URL url, ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException {
+	public void updateLastUpdated(final URL url, final ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.UPDATE_LAST_UPDATED);
 		ps.setString(1, newLastUpdated.toLocalDateTime().toString());
 		ps.setString(2, url.toString());
-		int numUpdated = ps.executeUpdate();
+		final int numUpdated = ps.executeUpdate();
 		if (numUpdated < 1)
 			throw new RecordNotInDatabaseException(Messages.DB_NO_RECORD);
 	}

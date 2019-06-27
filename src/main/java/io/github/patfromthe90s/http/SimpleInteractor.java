@@ -2,11 +2,9 @@ package io.github.patfromthe90s.http;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import org.apache.http.Header;
 import org.apache.http.client.fluent.Request;
@@ -15,26 +13,29 @@ import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
 import io.github.patfromthe90s.util.Messages;
 
-public class SimpleInteractor implements Interactor {
+/**
+ * Simple implementation of {@link Interactor}
+ * 
+ * @author Patrick
+ *
+ */
+public final class SimpleInteractor implements Interactor {
 
 	@Override
-	public LocalDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException {
+	public final ZonedDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException {
 		try {
-			Header[] lastModifiedHeader = Request.Head(url.toString())
-					.execute()
-					.returnResponse()
-					.getHeaders("last-modified");
-			
-			if (lastModifiedHeader.length < 1)
-				throw new HeaderNotPresentException(Messages.HEADER_NO_LAST_MOD);
-					
-			final String strLastModified = lastModifiedHeader[0].getValue();
-			// LocalDateTime lastModified = LocalDateTime.parse(strLastModified, DateTimeFormatter.RFC_1123_DATE_TIME);
-			ZonedDateTime lastModified = ZonedDateTime.parse(strLastModified, DateTimeFormatter.RFC_1123_DATE_TIME);
-			Instant instLastModified = lastModified.toInstant();
-			ZonedDateTime japanLastModified = ZonedDateTime.ofInstant(instLastModified, ZoneId.of(ZoneId.SHORT_IDS.get("JST")));
-			System.out.println(japanLastModified.toLocalDateTime().toString());
-			return lastModified.toLocalDateTime();
+			final Header[] lastModifiedHeader = Request.Head(url.toString())
+													.execute()
+													.returnResponse()
+													.getHeaders("last-modified");
+
+			// expect only one value, but library returns array so just return the first value
+			return Arrays.stream(lastModifiedHeader)
+					.map(Header::getValue)
+					.map( (String s) -> { return ZonedDateTime.parse(s, DateTimeFormatter.RFC_1123_DATE_TIME); })
+					.findFirst()
+					.orElseThrow(() -> new HeaderNotPresentException(Messages.HEADER_NO_LAST_MOD));	
+
 		} catch (IOException e) {
 			throw new GenericHTTPException(e);
 		}
@@ -42,8 +43,14 @@ public class SimpleInteractor implements Interactor {
 
 	@Override
 	public String getHtml(URL url) throws GenericHTTPException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return Request.Get(url.toString())
+						.execute()
+						.returnContent()
+						.asString();
+		} catch (IOException e) {
+			throw new GenericHTTPException(e);
+		}
 	}
 
 }

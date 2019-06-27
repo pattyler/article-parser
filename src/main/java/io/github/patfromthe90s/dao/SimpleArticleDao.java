@@ -21,12 +21,12 @@ public final class SimpleArticleDao implements ArticleDao {
 	
 	private final DataSource dataSource;
 	
-	public SimpleArticleDao(DataSource dataSource) {
+	public SimpleArticleDao(final DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
 	@Override
-	public List<Article> getArticlesBetween(ZonedDateTime from, ZonedDateTime to) throws SQLException {
+	public List<Article> getArticlesBetween(final ZonedDateTime from, final ZonedDateTime to) throws SQLException {
 		List<Article> articles = new ArrayList<>();
 		Connection conn = dataSource.getConnection();
 		PreparedStatement ps = conn.prepareStatement(SQLQueries.GET_ARTICLE);
@@ -52,7 +52,7 @@ public final class SimpleArticleDao implements ArticleDao {
 	 * Simple insert that does not guarantee or alert if the insert failed.
 	 */
 	@Override
-	public void insertArticle(Article article) throws SQLException {
+	public void insertArticle(final Article article) throws SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.INSERT_ARTICLE);
 		ps.setString(1, article.getUrl().toString());
 		ps.setString(2, article.getData());

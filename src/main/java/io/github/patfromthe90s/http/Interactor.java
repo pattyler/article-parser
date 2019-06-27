@@ -1,7 +1,7 @@
 package io.github.patfromthe90s.http;
 
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
@@ -15,13 +15,14 @@ import io.github.patfromthe90s.exception.HeaderNotPresentException;
 public interface Interactor {
 
 	/**
-	 * Returns the last time the page accosiate with {@code url} was modified by looking at the {@code last-modified} header.
+	 * Returns the last time, in UTC, the page associated with {@code url} was modified by looking at the {@code last-modified} header.
+	 * 
 	 * @param url The page to check.
-	 * @return The time the page was last modified according to the {@code last-modified} response header.
+	 * @return UTC Time the page was last modified according to the {@code last-modified} response header.
 	 * @throws GenericHTTPException if there was a problem communicating with the <code>url</code>
-	 * @throws HeaderNotPresentException if the <code>last-modified</code> header is not present in the HTTP resonse.
+	 * @throws HeaderNotPresentException if the <code>last-modified</code> header is not present in the HTTP response.
 	 */
-	public LocalDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException;
+	public ZonedDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException;
 	
 	/**
 	 * Fetch the HTML page associated with {@code url}.
