@@ -1,7 +1,7 @@
 package io.github.patfromthe90s.exception;
 
 /**
- * Exception denoting that something went wrong in the service layer
+ * Thrown to indicate that something went wrong in the service layer
  * 
  * @author Patrick
  *
