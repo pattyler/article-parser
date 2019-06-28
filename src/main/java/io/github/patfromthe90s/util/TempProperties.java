@@ -11,4 +11,8 @@ public class TempProperties {
 
 	public static final String DB_URL = "jdbc:sqlite:C:/Program Files/sqlite3/db/test.db";
 	
+	public static final String NHK_BASE_URL = "https://www3.nhk.or.jp/news/easy/";
+	public static final String NHK_JSON_TOP_LOC = "top-list.json";
+	public static final String NHK_JSON_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	
 }

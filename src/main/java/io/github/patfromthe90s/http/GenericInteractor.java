@@ -2,6 +2,7 @@ package io.github.patfromthe90s.http;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -14,15 +15,16 @@ import io.github.patfromthe90s.exception.HeaderNotPresentException;
 import io.github.patfromthe90s.util.Messages;
 
 /**
- * Simple implementation of {@link Interactor}
- * 
+ * Generic implementation of {@link Interactor}
  * @author Patrick
  *
  */
-public final class SimpleInteractor implements Interactor {
-
+public abstract class GenericInteractor implements Interactor {
+	
+	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8"); 
+	
 	@Override
-	public final ZonedDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException {
+	public ZonedDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException {
 		try {
 			final Header[] lastModifiedHeader = Request.Head(url.toString())
 													.execute()
@@ -40,14 +42,14 @@ public final class SimpleInteractor implements Interactor {
 			throw new GenericHTTPException(e);
 		}
 	}
-
+	
 	@Override
-	public String getHtml(URL url) throws GenericHTTPException {
+	public String get(URL url) throws GenericHTTPException {
 		try {
 			return Request.Get(url.toString())
 						.execute()
 						.returnContent()
-						.asString();
+						.asString(UTF8_CHARSET);
 		} catch (IOException e) {
 			throw new GenericHTTPException(e);
 		}

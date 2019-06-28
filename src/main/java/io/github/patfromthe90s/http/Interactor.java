@@ -7,13 +7,15 @@ import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
 
 /**
- * Interface for getting information and data from {@code URL}s.
+ * Interface for retrieving data over HTTP. <br/>
+ * The data should be returned as a <code>String</code> in the <code>get()</code> method. The meaning of
+ * this data depends on the implementation. (i.e. HTML, JSON, etc.)
  * 
  * @author Patrick
  *
  */
 public interface Interactor {
-
+	
 	/**
 	 * Returns the last time, in UTC, the page associated with {@code url} was modified by looking at the {@code last-modified} header.
 	 * 
@@ -23,13 +25,14 @@ public interface Interactor {
 	 * @throws HeaderNotPresentException if the <code>last-modified</code> header is not present in the HTTP response.
 	 */
 	public ZonedDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException;
-	
+
 	/**
-	 * Fetch the HTML page associated with {@code url}.
-	 * @param url The page to fetch.
-	 * @return The HTML of {@code url}.
+	 * Given a URL, retrieve the data as a String.
+	 * 
+	 * @param url The location of the data.
+	 * @return The data.
 	 * @throws GenericHTTPException if there was a problem communicating with the <code>url</code>
 	 */
-	public String getHtml(URL url) throws GenericHTTPException;
+	public String get(URL url) throws GenericHTTPException;
 	
 }

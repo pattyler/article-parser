@@ -1,7 +1,6 @@
 package io.github.patfromthe90s.dao;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
