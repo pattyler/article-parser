@@ -58,14 +58,16 @@ public class SimpleArticleDaoTest {
 		public void testGetArticlesBetween() throws MalformedURLException, SQLException {
 			// begin data setup
 			final String TEST_DATA = "test";
-			final URL URL = new URL("http://test.com");
-			final LocalDateTime ARTICLE_DATE = LocalDateTime.of(1995, 8, 24, 23, 40);
+			final String STR_URL = "http://test.com";
+			final URL URL = new URL(STR_URL);
+			final LocalDateTime LOCAL_ARTICLE_DATE = LocalDateTime.of(1995, 8, 24, 23, 40);
+			final ZonedDateTime ARTICLE_DATE = ZonedDateTime.of(LOCAL_ARTICLE_DATE, ZoneId.of("UTC"));
 			final ZonedDateTime FROM = ZonedDateTime.of(LocalDateTime.of(1990, 8, 24, 23, 40), ZoneId.of("UTC"));
 			final ZonedDateTime TO = ZonedDateTime.of(LocalDateTime.of(2015, 06, 24, 23, 15), ZoneId.of("UTC"));
 			final Article EXPECTED_ARTICLE = Article.create()
 											.setData(TEST_DATA)
 											.setDate(ARTICLE_DATE)
-											.setUrl(URL);
+											.setUrl(STR_URL);
 			// end data setup
 			
 			// begin mock setup
@@ -73,7 +75,7 @@ public class SimpleArticleDaoTest {
 			Mockito.when(mResultSet.next()).thenReturn(true).thenReturn(false); // make sure to avoid infinite loop
 			Mockito.when(mResultSet.getString(1)).thenReturn(URL.toString());
 			Mockito.when(mResultSet.getString(2)).thenReturn(TEST_DATA);
-			Mockito.when(mResultSet.getString(3)).thenReturn(ARTICLE_DATE.toString());
+			Mockito.when(mResultSet.getString(3)).thenReturn(LOCAL_ARTICLE_DATE.toString());
 			// end mock setup
 			
 			List<Article> articles = articleDao.getArticlesBetween(FROM, TO);
@@ -100,12 +102,12 @@ public class SimpleArticleDaoTest {
 		
 		@DisplayName("by checking no exception thrown from insertArticle()")
 		@Test
-		public void testInsertArticleNoException() throws SQLException, MalformedURLException {
+		public void testInsertArticleNoException() throws SQLException {
 			// begin data setup
 			final Article article = Article.create()
 										.setData("test")
-										.setDate(LocalDateTime.now())
-										.setUrl(new URL("http://www.google.com"));
+										.setDate(ZonedDateTime.now())
+										.setUrl("http://www.google.com");
 			// end data setup
 			
 			// being mock setup

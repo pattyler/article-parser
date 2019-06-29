@@ -1,7 +1,6 @@
 package io.github.patfromthe90s.model;
 
-import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * Model representing an article stored in the database. <br/>
@@ -12,8 +11,8 @@ import java.time.LocalDateTime;
  */
 public final class Article {
 	
-	private URL url;
-	private LocalDateTime date;
+	private String url;
+	private ZonedDateTime date;
 	private String data;
 	
 	// Builder pattern has been used to allow extensibility in the future, at the cost of 
@@ -25,7 +24,7 @@ public final class Article {
 		return new Article();
 	}
 	
-	public Article setDate(LocalDateTime date) {
+	public Article setDate(ZonedDateTime date) {
 		this.date = date;
 		return this;
 	}
@@ -35,16 +34,16 @@ public final class Article {
 		return this;
 	}
 	
-	public Article setUrl(URL url) {
+	public Article setUrl(String url) {
 		this.url = url;
 		return this;
 	}
 
-	public URL getUrl() {
+	public String getUrl() {
 		return url;
 	}
 
-	public LocalDateTime getDate() {
+	public ZonedDateTime getDate() {
 		return date;
 	}
 

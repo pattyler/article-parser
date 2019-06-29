@@ -15,4 +15,8 @@ public class TempProperties {
 	public static final String NHK_JSON_TOP_LOC = "top-list.json";
 	public static final String NHK_JSON_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 	
+	//CSS selectors for extracting content from HTML
+	public static final String SELECTOR_ARTICLE_TITLE = "h1.article-main__title";
+	public static final String SELECTOR_ARTICLE_CONTENT = "div.article-main__body";
+	
 }

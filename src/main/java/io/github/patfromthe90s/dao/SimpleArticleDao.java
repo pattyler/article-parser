@@ -1,7 +1,5 @@
 package io.github.patfromthe90s.dao;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +14,7 @@ import javax.sql.DataSource;
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.util.DaoUtils;
 import io.github.patfromthe90s.util.SQLQueries;
+import io.github.patfromthe90s.util.TimeUtils;
 
 public final class SimpleArticleDao implements ArticleDao {
 	
@@ -34,15 +33,13 @@ public final class SimpleArticleDao implements ArticleDao {
 		ps.setString(2, to.toLocalDateTime().toString());
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			try {
-				Article article = Article.create()
-										.setUrl(new URL(rs.getString(1)))
-										.setData(rs.getString(2))
-										.setDate(LocalDateTime.parse(rs.getString(3)));
-				articles.add(article);
-			} catch (MalformedURLException e) {
-				// re-throw? log?
-			}
+			Article article = Article.create()
+									.setUrl(rs.getString(1))
+									.setData(rs.getString(2))
+									.setDate(ZonedDateTime.of(
+												LocalDateTime.parse(rs.getString(3)),
+												TimeUtils.UTC_ZONE_ID));
+			articles.add(article);
 		}
 		
 		return articles;
