@@ -10,7 +10,6 @@ import io.github.patfromthe90s.model.Article;
  */
 public interface ArticleParser {
 	
-	
 	public Article parse(String html);
 
 }

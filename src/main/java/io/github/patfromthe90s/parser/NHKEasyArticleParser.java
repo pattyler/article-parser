@@ -5,15 +5,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.StreamSupport;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.select.NodeVisitor;
 
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.util.TempProperties;
@@ -40,39 +38,51 @@ public class NHKEasyArticleParser implements ArticleParser {
 	}
 	
 	private String extractData(Document htmlDoc) {
-		List<String> data = new ArrayList<>();
-		
-		Elements els = htmlDoc.select(TempProperties.SELECTOR_ARTICLE_CONTENT)
-								.get(0)
-								.getAllElements();
-		
 		StringBuilder sb = new StringBuilder();
-		/**
-		StreamSupport.stream(els.spliterator(), false)
-					.filter(e -> !e.ownText().isEmpty())
-					.filter(e -> !e.tagName().equals("rt"))
-					.map(Element::ownText)
-					.skip(1)
-					.forEach(sb::append);
-					*/
+
+		htmlDoc.select(TempProperties.SELECTOR_ARTICLE_CONTENT)
+				.get(0)
+				.traverse(new NodeVisitor() {
+					
+					@Override
+					public void tail(Node node, int depth) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void head(Node node, int depth) {
+						// DFS of this node's and children's nodes' TextNodes. Seems to be only way
+						// to get text in correct order. (e.g. <p> Some <b>big</b> text</p> using p.textNodes() would give
+						// something like "some text big" [analogy not actually correct, but similar to this]) .
+						if (node instanceof TextNode) {
+							TextNode tn = (TextNode) node;
+							if (tn.parent() instanceof Element) {
+								Element e = (Element) tn.parent();
+								if (!e.tagName().equals(TempProperties.NHK_HTML_TAG_FURIGANA) && !e.ownText().isEmpty())	// ignore furigana
+									sb.append(tn.text());
+							}
+						}
+					}
+				});
 		
 		System.out.println(sb.toString());
-		return null;
+		return sb.toString();
 	}
 	
 	// This method relies on parsing tags and text elements from the HMTL page.
 	// Consider doing this in a different, more stable way.
 	private ZonedDateTime extractDateTime(Document htmlDoc) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TempProperties.NHK_HTML_DATE_PATTERN);
 		// Date is part of "id" attribute of <body>. Format is newsXXX_XXX, so strip news
 		// and parse the section before the underscore.
-		String rawDate = htmlDoc.select("body")
+		String rawDate = htmlDoc.select(TempProperties.NHK_HTML_SELECTOR_DATE)
 								.attr("id")
 								.substring(4)
 								.split("_")[0]; 
 		LocalDate localDate = LocalDate.parse(rawDate, formatter);
 		
-		String rawTime = htmlDoc.select("#js-article-date")
+		String rawTime = htmlDoc.select(TempProperties.NHK_HTML_SELECTOR_TIME)
 								.eachText()
 								.stream()
 								.findFirst()

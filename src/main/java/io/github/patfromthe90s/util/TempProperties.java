@@ -14,6 +14,10 @@ public class TempProperties {
 	public static final String NHK_BASE_URL = "https://www3.nhk.or.jp/news/easy/";
 	public static final String NHK_JSON_TOP_LOC = "top-list.json";
 	public static final String NHK_JSON_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	public static final String NHK_HTML_SELECTOR_TIME = "#js-article-date";
+	public static final String NHK_HTML_SELECTOR_DATE = "body";
+	public static final String NHK_HTML_DATE_PATTERN = "yyyyMMdd";
+	public static final String NHK_HTML_TAG_FURIGANA = "rt";
 	
 	//CSS selectors for extracting content from HTML
 	public static final String SELECTOR_ARTICLE_TITLE = "h1.article-main__title";
