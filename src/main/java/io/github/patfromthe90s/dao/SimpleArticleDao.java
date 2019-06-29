@@ -53,7 +53,7 @@ public final class SimpleArticleDao implements ArticleDao {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.INSERT_ARTICLE);
 		ps.setString(1, article.getUrl().toString());
 		ps.setString(2, article.getData());
-		ps.setString(2, article.getDate().toString());
+		ps.setString(3, article.getDate().toLocalDateTime().toString());
 		ps.executeUpdate();
 	}
 

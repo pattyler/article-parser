@@ -24,18 +24,18 @@ public interface SiteDao {
 	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
 	 * @throws SQLException If there is some underlying problem.
 	 */
-	public ZonedDateTime getLastUpdated(URL url) throws RecordNotInDatabaseException, SQLException;
+	public ZonedDateTime getLastUpdated(String url) throws RecordNotInDatabaseException, SQLException;
 	
 	/**
 	 * Associate the given {@code url} in the database with {@code newLastUpdated}.<br/>
 	 * Assumes {@code newLastUpdated} is more recent than the current value in the database.
 	 * 
 	 * 
-	 * @param url {@link URL} representing site to update.
+	 * @param url <code>URL</code> representing site to update.
 	 * @param newLastUpdated New {@code lastUpdated} time to insert into the database.
 	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
 	 * @throws SQLException If there is some underlying problem.
 	 */
-	public void updateLastUpdated(URL url, ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException;
+	public void updateLastUpdated(String url, ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException;
 
 }

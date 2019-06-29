@@ -21,13 +21,13 @@ import io.github.patfromthe90s.util.TimeUtils;
  * @author Patrick
  *
  */
-public class NHKEasyJsonParser implements IJsonParser {
+public class NHKEasyArticleListParser implements ArticleListParser {
 	
 	/**
 	 * Expects a well-formed JSON array formatted as a <code>String</code>
 	 */
 	@Override
-	public List<ArticleLinkDate> getArticleLinksAndDates(String json) {
+	public List<ArticleLinkDate> parse(String json) {
 		List<ArticleLinkDate> articleLinkDates = new ArrayList<>();
 		
 		JsonArray ja = new JsonParser().parse(json).getAsJsonArray();

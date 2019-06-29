@@ -26,24 +26,24 @@ public class NHKEasyPageParserTest {
 			"	\"title\": \"\\u6771\\u4eac\\u30aa\\u30ea\\u30f3\\u30d4\\u30c3\\u30af\\u3067\\u306f\\u30da\\u30c3\\u30c8\\u30dc\\u30c8\\u30eb\\u3092\\u6301\\u3063\\u3066\\u4f1a\\u5834\\u306b\\u5165\\u308c\\u308b\"\r\n" + 
 			"}]";
 	
-	private IJsonParser jsonParser;
+	private ArticleListParser articleListParser;
 	
 	@BeforeEach
 	public void setup() {
-		jsonParser = new NHKEasyJsonParser();
+		articleListParser = new NHKEasyArticleListParser();
 	}
 	
 	@Test
 	@DisplayName("When JSON array is empty, then returned List is empty")
 	public void whenJsonEmpty_thenListEmpty() {
-		List<ArticleLinkDate> list = jsonParser.getArticleLinksAndDates("[]");
+		List<ArticleLinkDate> list = articleListParser.parse("[]");
 		assertEquals(0, list.size());
 	}
 	
 	@Test
 	@DisplayName("When JSON array is not empty, then correct values are returned in a list")
 	public void whenJsonNonEmpty_thenCorrectList() {
-		List<ArticleLinkDate> list = jsonParser.getArticleLinksAndDates(VALID_JSON);
+		List<ArticleLinkDate> list = articleListParser.parse(VALID_JSON);
 		assertEquals(2, list.size());
 		assertEquals(NEWS_ID_1_URL, list.get(0).getUrl());
 		assertEquals(NEWS_ID_2_URL, list.get(1).getUrl());

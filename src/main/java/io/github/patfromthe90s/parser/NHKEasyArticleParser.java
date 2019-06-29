@@ -30,7 +30,7 @@ public class NHKEasyArticleParser implements ArticleParser {
 		Document htmlDoc = Jsoup.parse(html);
 		String data = extractData(htmlDoc);
 		ZonedDateTime date = extractDateTime(htmlDoc);
-		String title = extractTitle(htmlDoc);
+		//String title = extractTitle(htmlDoc);
 		
 		return Article.create()
 						.setData(data)
@@ -66,7 +66,6 @@ public class NHKEasyArticleParser implements ArticleParser {
 					}
 				});
 		
-		System.out.println(sb.toString());
 		return sb.toString();
 	}
 	
@@ -96,9 +95,6 @@ public class NHKEasyArticleParser implements ArticleParser {
 								TimeUtils.JST_ZONE_ID)
 							.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
 	}
-	
-	private String extractTitle(Document htmlDoc) {
-		return null;
-	}
+
 
 }

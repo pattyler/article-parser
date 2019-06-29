@@ -1,6 +1,5 @@
 package io.github.patfromthe90s.dao;
 
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,7 +33,7 @@ public final class SimpleSiteDao implements SiteDao {
 	}
 
 	@Override
-	public ZonedDateTime getLastUpdated(final URL url) throws RecordNotInDatabaseException, SQLException {
+	public ZonedDateTime getLastUpdated(final String url) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.GET_LAST_UPDATED);
 		ps.setString(1, url.toString()); 
 		ResultSet rs = ps.executeQuery();
@@ -47,7 +46,7 @@ public final class SimpleSiteDao implements SiteDao {
 	}
 	
 	@Override
-	public void updateLastUpdated(final URL url, final ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException {
+	public void updateLastUpdated(final String url, final ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.UPDATE_LAST_UPDATED);
 		ps.setString(1, newLastUpdated.toLocalDateTime().toString());
 		ps.setString(2, url.toString());

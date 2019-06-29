@@ -26,7 +26,7 @@ public class NHKEasyArticleParserTest {
 	static {
 		StringBuilder sb = new StringBuilder();
 		InputStream is = NHKEasyArticleParserTest.class.getClassLoader().getResourceAsStream("example-article.html");
-		try (Scanner scanner = new Scanner(is)) {
+		try (Scanner scanner = new Scanner(is, "UTF-8")) {
 			while (scanner.hasNextLine())
 				sb.append(scanner.nextLine());
 		}
@@ -42,7 +42,7 @@ public class NHKEasyArticleParserTest {
 	}
 	
 	@Test
-	@DisplayName("Whne given a HTML page, then an Article object is correctly returned")
+	@DisplayName("When given a HTML page, then it is parsed correctly and an Article returned")
 	public void whenGivenHtml_thenArticleReturnedCorrect() {
 		Article parsedArticle = parser.parse(EXAMPLE_ARTICLE_HTML);
 		assertEquals(EXAMPLE_ARTICLE_DATE, parsedArticle.getDate());

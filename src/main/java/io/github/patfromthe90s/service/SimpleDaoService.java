@@ -1,6 +1,5 @@
 package io.github.patfromthe90s.service;
 
-import java.net.URL;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -28,7 +27,7 @@ public final class SimpleDaoService implements DaoService {
 	}
 
 	@Override
-	public ZonedDateTime getLastUpdated(final URL url) throws DaoServiceException {
+	public ZonedDateTime getLastUpdated(final String url) throws DaoServiceException {
 		try {
 			return siteDao.getLastUpdated(url);
 		} catch (RecordNotInDatabaseException | SQLException e) {
@@ -38,7 +37,7 @@ public final class SimpleDaoService implements DaoService {
 	}
 
 	@Override
-	public void updateLastUpdated(final URL url, ZonedDateTime newLastUpdated) throws DaoServiceException {
+	public void updateLastUpdated(final String url, ZonedDateTime newLastUpdated) throws DaoServiceException {
 		try {
 			newLastUpdated = newLastUpdated.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
 			siteDao.updateLastUpdated(url, newLastUpdated);

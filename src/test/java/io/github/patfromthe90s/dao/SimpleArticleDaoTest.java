@@ -25,7 +25,6 @@ import org.mockito.Mockito;
 
 import io.github.patfromthe90s.model.Article;
 
-@DisplayName("Test logic of SimpleArticleDao")
 public class SimpleArticleDaoTest {
 	
 	private DataSource mDataSource;

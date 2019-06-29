@@ -1,7 +1,5 @@
 package io.github.patfromthe90s.http;
 
-import java.net.URL;
-
 import io.github.patfromthe90s.exception.GenericHTTPException;
 
 /**
@@ -13,7 +11,7 @@ import io.github.patfromthe90s.exception.GenericHTTPException;
 public final class SimpleJsonInteractor extends GenericInteractor {
 	
 	@Override
-	public String get(URL url) throws GenericHTTPException {
+	public String get(String url) throws GenericHTTPException {
 		return super.get(url).substring(1);
 	}
 

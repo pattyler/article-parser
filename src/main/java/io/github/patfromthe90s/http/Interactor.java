@@ -1,6 +1,5 @@
 package io.github.patfromthe90s.http;
 
-import java.net.URL;
 import java.time.ZonedDateTime;
 
 import io.github.patfromthe90s.exception.GenericHTTPException;
@@ -24,7 +23,7 @@ public interface Interactor {
 	 * @throws GenericHTTPException if there was a problem communicating with the <code>url</code>
 	 * @throws HeaderNotPresentException if the <code>last-modified</code> header is not present in the HTTP response.
 	 */
-	public ZonedDateTime getLastUpdated(URL url) throws GenericHTTPException, HeaderNotPresentException;
+	public ZonedDateTime getLastUpdated(String url) throws GenericHTTPException, HeaderNotPresentException;
 
 	/**
 	 * Given a URL, retrieve the data as a String.
@@ -33,6 +32,6 @@ public interface Interactor {
 	 * @return The data.
 	 * @throws GenericHTTPException if there was a problem communicating with the <code>url</code>
 	 */
-	public String get(URL url) throws GenericHTTPException;
+	public String get(String url) throws GenericHTTPException;
 	
 }
