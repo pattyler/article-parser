@@ -3,6 +3,7 @@ package io.github.patfromthe90s.service;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.github.patfromthe90s.exception.DaoServiceException;
 import io.github.patfromthe90s.exception.SiteServiceException;
@@ -38,10 +39,14 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 			ZonedDateTime siteLastUpdated = siteService.getLastUpdated(JSON_URL);
 			if (siteLastUpdated.isAfter(currentLastUpdated)) {
 				String json = siteService.getJson(JSON_URL);
-				articlesToGrab = articleListParser.parse(json);
+				articlesToGrab = articleListParser.parse(json)
+												.stream()
+												.filter(ald -> ald.getDateTime().isAfter(currentLastUpdated))
+												.collect(Collectors.toList());
 			}
 		} catch (SiteServiceException | DaoServiceException e) {
 			// log this
+			e.printStackTrace();
 		}
 		
 		return articlesToGrab;
@@ -59,10 +64,22 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 				numGrabbed++;
 			} catch (SiteServiceException | DaoServiceException e) {
 				// log this
+				e.printStackTrace();
 			}
 		}
 		
 		return numGrabbed;
+	}
+
+	@Override
+	public void updateLastUpdated() {
+		try {
+			ZonedDateTime siteLastUpdated = siteService.getLastUpdated(JSON_URL);
+			daoService.updateLastUpdated(SITE_URL, siteLastUpdated);
+		} catch (SiteServiceException | DaoServiceException e) {
+			// log this
+			e.printStackTrace();
+		}
 	}
 
 }

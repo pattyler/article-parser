@@ -79,15 +79,37 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 		public void thenListReturned() throws SiteServiceException, DaoServiceException {
 			ZonedDateTime mCurrentLastUpdated = ZonedDateTime.now().minusDays(10);
 			ZonedDateTime mSiteLastUpdated = ZonedDateTime.now().minusDays(1);	
+			ArticleLinkDate mArticleLinkDate = Mockito.mock(ArticleLinkDate.class);
+			Mockito.when(mArticleLinkDate.getDateTime()).thenReturn(ZonedDateTime.now());
 			List<ArticleLinkDate> articleLinkDates = new ArrayList<ArticleLinkDate>();
-			articleLinkDates.add(Mockito.mock(ArticleLinkDate.class));
-			articleLinkDates.add(Mockito.mock(ArticleLinkDate.class));
+			articleLinkDates.add(mArticleLinkDate);
+			articleLinkDates.add(mArticleLinkDate);
 			Mockito.when(mDaoService.getLastUpdated(Mockito.anyString())).thenReturn(mCurrentLastUpdated);
 			Mockito.when(mSiteService.getLastUpdated(Mockito.anyString())).thenReturn(mSiteLastUpdated);
 			Mockito.when(mSiteService.getJson(Mockito.anyString())).thenReturn("");
 			Mockito.when(mArticleListParser.parse(Mockito.anyString())).thenReturn(articleLinkDates);
 			
 			assertEquals(2, articleGrabberService.articlesToGrab().size());
+		}
+		
+		@Test
+		@DisplayName("When not all articles are recent, then only recent ones are returned")
+		public void whenNotAllNew_thenOnlyNewReturned() throws SiteServiceException, DaoServiceException {
+			ZonedDateTime mCurrentLastUpdated = ZonedDateTime.now().minusDays(10);
+			ZonedDateTime mSiteLastUpdated = ZonedDateTime.now().minusDays(1);	
+			ArticleLinkDate mArticleLinkDate = Mockito.mock(ArticleLinkDate.class);
+			Mockito.when(mArticleLinkDate.getDateTime()) // one article new, one article older than mCurrentLastUpdated
+					.thenReturn(ZonedDateTime.now())
+					.thenReturn(ZonedDateTime.now().minusDays(11));
+			List<ArticleLinkDate> articleLinkDates = new ArrayList<ArticleLinkDate>();
+			articleLinkDates.add(mArticleLinkDate);
+			articleLinkDates.add(mArticleLinkDate);
+			Mockito.when(mDaoService.getLastUpdated(Mockito.anyString())).thenReturn(mCurrentLastUpdated);
+			Mockito.when(mSiteService.getLastUpdated(Mockito.anyString())).thenReturn(mSiteLastUpdated);
+			Mockito.when(mSiteService.getJson(Mockito.anyString())).thenReturn("");
+			Mockito.when(mArticleListParser.parse(Mockito.anyString())).thenReturn(articleLinkDates);
+			
+			assertEquals(1, articleGrabberService.articlesToGrab().size());
 		}
 		
 		@Test
@@ -143,7 +165,5 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 		}
 		
 	}
-		
-
-
+	
 }

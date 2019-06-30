@@ -30,4 +30,10 @@ public interface ArticleGrabberService {
 	 */
 	public int grabAndPersist(List<ArticleLinkDate> articleLinkDates);
 	
+	/**
+	 * Update the database site table to contain the most recent article as lastUpdated. <br/>
+	 * This should be called directly after <code>grabAndPersist</code>
+	 */
+	public void updateLastUpdated();
+	
 }
