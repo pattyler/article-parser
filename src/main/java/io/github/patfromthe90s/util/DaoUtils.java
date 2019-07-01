@@ -14,6 +14,13 @@ import javax.sql.DataSource;
  */
 public class DaoUtils {
 	
+	/**
+	 * Create a {@link PreparedStatement}.
+	 * @param dataSource The data source for getting a {@link Connection}.
+	 * @param query The statement to prepare.
+	 * @return A prepared statement.
+	 * @throws SQLException
+	 */
 	public static PreparedStatement getPreparedStatement(DataSource dataSource, String query) throws SQLException {
 		Connection conn = dataSource.getConnection();
 		return conn.prepareStatement(query);

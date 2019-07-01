@@ -46,8 +46,7 @@ public class NHKEasyArticleParser implements ArticleParser {
 					
 					@Override
 					public void tail(Node node, int depth) {
-						// TODO Auto-generated method stub
-						
+						// do nothing
 					}
 					
 					@Override

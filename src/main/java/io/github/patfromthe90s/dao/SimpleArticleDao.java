@@ -1,6 +1,5 @@
 package io.github.patfromthe90s.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,12 +10,17 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.util.DaoUtils;
 import io.github.patfromthe90s.util.SQLQueries;
 import io.github.patfromthe90s.util.TimeUtils;
 
 public final class SimpleArticleDao implements ArticleDao {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleArticleDao.class);
 	
 	private final DataSource dataSource;
 	
@@ -27,10 +31,10 @@ public final class SimpleArticleDao implements ArticleDao {
 	@Override
 	public List<Article> getArticlesBetween(final ZonedDateTime from, final ZonedDateTime to) throws SQLException {
 		List<Article> articles = new ArrayList<>();
-		Connection conn = dataSource.getConnection();
-		PreparedStatement ps = conn.prepareStatement(SQLQueries.GET_ARTICLE);
+		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.GET_ARTICLE);
 		ps.setString(1, from.toLocalDateTime().toString());
 		ps.setString(2, to.toLocalDateTime().toString());
+		LOGGER.info("Preapring to execute statement: [{}] using dates {} and {}", SQLQueries.GET_ARTICLE, from, to);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			Article article = Article.create()
@@ -54,6 +58,7 @@ public final class SimpleArticleDao implements ArticleDao {
 		ps.setString(1, article.getUrl().toString());
 		ps.setString(2, article.getData());
 		ps.setString(3, article.getDate().toLocalDateTime().toString());
+		LOGGER.info("Preapring to execute statement: [{}] using article {}", SQLQueries.INSERT_ARTICLE, article);
 		ps.executeUpdate();
 	}
 

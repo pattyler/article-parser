@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.patfromthe90s.exception.DaoServiceException;
 import io.github.patfromthe90s.exception.SiteServiceException;
 import io.github.patfromthe90s.model.Article;
@@ -15,6 +18,7 @@ import io.github.patfromthe90s.util.TempProperties;
 
 public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleNHKEasyArticleGrabberService.class);
 	private static final String SITE_URL = TempProperties.NHK_BASE_URL;
 	private static final String JSON_URL = TempProperties.NHK_JSON_URL;
 	
@@ -37,6 +41,7 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 		try {
 			ZonedDateTime currentLastUpdated = daoService.getLastUpdated(SITE_URL);
 			ZonedDateTime siteLastUpdated = siteService.getLastUpdated(JSON_URL);
+			LOGGER.debug("Checking for new articles using current date {} and site date {}", currentLastUpdated, siteLastUpdated);
 			if (siteLastUpdated.isAfter(currentLastUpdated)) {
 				String json = siteService.getJson(JSON_URL);
 				articlesToGrab = articleListParser.parse(json)
@@ -45,10 +50,11 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 												.collect(Collectors.toList());
 			}
 		} catch (SiteServiceException | DaoServiceException e) {
-			// log this
+			LOGGER.error(e.getMessage(), e);
 			e.printStackTrace();
 		}
 		
+		LOGGER.debug("Articles to grab are: {}", articlesToGrab);
 		return articlesToGrab;
 	}
 
@@ -56,6 +62,7 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 	public int grabAndPersist(List<ArticleLinkDate> articleLinkDates) {
 		int numGrabbed = 0;
 		for (ArticleLinkDate ald : articleLinkDates) {
+			LOGGER.debug("Proccesing {}", ald);
 			try {
 				String articleHtml = siteService.getHtml(ald.getUrl());
 				Article parsedArticle = articleParser.parse(articleHtml);
@@ -63,11 +70,11 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 				daoService.insertArticle(parsedArticle);
 				numGrabbed++;
 			} catch (SiteServiceException | DaoServiceException e) {
-				// log this
+				LOGGER.error(e.getMessage(), e);
 				e.printStackTrace();
 			}
 		}
-		
+		LOGGER.info("Number of articles successfully processed: {}", numGrabbed);
 		return numGrabbed;
 	}
 
@@ -77,7 +84,7 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 			ZonedDateTime siteLastUpdated = siteService.getLastUpdated(JSON_URL);
 			daoService.updateLastUpdated(SITE_URL, siteLastUpdated);
 		} catch (SiteServiceException | DaoServiceException e) {
-			// log this
+			LOGGER.error(e.getMessage(), e);
 			e.printStackTrace();
 		}
 	}

@@ -4,6 +4,9 @@ import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.patfromthe90s.dao.ArticleDao;
 import io.github.patfromthe90s.dao.SiteDao;
 import io.github.patfromthe90s.exception.DaoServiceException;
@@ -18,6 +21,8 @@ import io.github.patfromthe90s.util.TimeUtils;
  */
 public final class SimpleDaoService implements DaoService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleDaoService.class);
+	
 	private final SiteDao siteDao;
 	private final ArticleDao articleDao;
 	
@@ -29,9 +34,10 @@ public final class SimpleDaoService implements DaoService {
 	@Override
 	public ZonedDateTime getLastUpdated(final String url) throws DaoServiceException {
 		try {
+			LOGGER.info("Getting last updated date for {}", url);
 			return siteDao.getLastUpdated(url);
 		} catch (RecordNotInDatabaseException | SQLException e) {
-			// TODO handle this properly
+			LOGGER.error(e.getMessage(), e);
 			throw new DaoServiceException(e);
 		}
 	}
@@ -40,9 +46,10 @@ public final class SimpleDaoService implements DaoService {
 	public void updateLastUpdated(final String url, ZonedDateTime newLastUpdated) throws DaoServiceException {
 		try {
 			newLastUpdated = newLastUpdated.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
+			LOGGER.info("Updating last updated using URL {} and date {}", url, newLastUpdated);
 			siteDao.updateLastUpdated(url, newLastUpdated);
 		} catch (RecordNotInDatabaseException | SQLException e) {
-			// TODO handle this properly
+			LOGGER.error(e.getMessage(), e);
 			throw new DaoServiceException(e);
 		}
 	}

@@ -9,6 +9,9 @@ import java.time.ZonedDateTime;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
 import io.github.patfromthe90s.util.DaoUtils;
 import io.github.patfromthe90s.util.Messages;
@@ -22,6 +25,7 @@ import io.github.patfromthe90s.util.TimeUtils;
  *
  */
 public final class SimpleSiteDao implements SiteDao {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSiteDao.class);
 	
 	private final DataSource dataSource;
 	
@@ -35,7 +39,8 @@ public final class SimpleSiteDao implements SiteDao {
 	@Override
 	public ZonedDateTime getLastUpdated(final String url) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.GET_LAST_UPDATED);
-		ps.setString(1, url.toString()); 
+		ps.setString(1, url);
+		LOGGER.info("Preapring to execute statement: [{}] using url {}", SQLQueries.GET_LAST_UPDATED, url);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			LocalDateTime ldt = LocalDateTime.parse(rs.getString(1));
@@ -50,6 +55,7 @@ public final class SimpleSiteDao implements SiteDao {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.UPDATE_LAST_UPDATED);
 		ps.setString(1, newLastUpdated.toLocalDateTime().toString());
 		ps.setString(2, url.toString());
+		LOGGER.info("Preapring to execute statement: [{}] using url {} and date {}", SQLQueries.UPDATE_LAST_UPDATED, url, newLastUpdated);
 		final int numUpdated = ps.executeUpdate();
 		if (numUpdated < 1)
 			throw new RecordNotInDatabaseException(Messages.DB_NO_RECORD);

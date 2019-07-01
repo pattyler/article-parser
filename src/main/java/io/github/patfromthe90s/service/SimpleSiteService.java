@@ -2,6 +2,9 @@ package io.github.patfromthe90s.service;
 
 import java.time.ZonedDateTime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
 import io.github.patfromthe90s.exception.SiteServiceException;
@@ -15,6 +18,8 @@ import io.github.patfromthe90s.http.Interactor;
  */
 public class SimpleSiteService implements SiteService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSiteService.class);
+	
 	private final Interactor htmlInteractor;
 	private final Interactor jsonInteractor;
 	
@@ -26,9 +31,10 @@ public class SimpleSiteService implements SiteService {
 	@Override
 	public ZonedDateTime getLastUpdated(String url) throws SiteServiceException {
 		try {
+			LOGGER.info("getting last updated for url {}", url);
 			return htmlInteractor.getLastUpdated(url);
 		} catch (GenericHTTPException | HeaderNotPresentException e) {
-			// TODO log this
+			LOGGER.error(e.getMessage(), e);
 			throw new SiteServiceException(e);
 		}
 	}
@@ -36,9 +42,10 @@ public class SimpleSiteService implements SiteService {
 	@Override
 	public String getHtml(String url) throws SiteServiceException {
 		try {
+			LOGGER.info("getting HTML for url {}", url);
 			return htmlInteractor.get(url);
 		} catch (GenericHTTPException e) {
-			// TODO log this
+			LOGGER.error(e.getMessage(), e);
 			throw new SiteServiceException(e);
 		}
 	}
@@ -46,9 +53,10 @@ public class SimpleSiteService implements SiteService {
 	@Override
 	public String getJson(String url) throws SiteServiceException {
 		try {
+			LOGGER.info("getting JSON for url {}", url);
 			return jsonInteractor.get(url);
 		} catch (GenericHTTPException e) {
-			// TODO log this
+			LOGGER.error(e.getMessage(), e);
 			throw new SiteServiceException(e);
 		}
 	}

@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import org.apache.http.Header;
 import org.apache.http.client.fluent.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
@@ -20,13 +22,15 @@ import io.github.patfromthe90s.util.Messages;
  */
 public abstract class GenericInteractor implements Interactor {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenericInteractor.class);
 	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8"); 
 	
 	@Override
 	public ZonedDateTime getLastUpdated(String url) throws GenericHTTPException, HeaderNotPresentException {
 		try {
-			final Header[] lastModifiedHeader = Request.Head(url)
-													.execute()
+			final Request req = Request.Head(url);
+			LOGGER.info("Executing request: {}", req);
+			final Header[] lastModifiedHeader = req.execute()
 													.returnResponse()
 													.getHeaders("last-modified");
 
@@ -38,6 +42,7 @@ public abstract class GenericInteractor implements Interactor {
 					.orElseThrow(() -> new HeaderNotPresentException(Messages.HEADER_NO_LAST_MOD));	
 
 		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
 			throw new GenericHTTPException(e);
 		}
 	}
@@ -45,11 +50,13 @@ public abstract class GenericInteractor implements Interactor {
 	@Override
 	public String get(String url) throws GenericHTTPException {
 		try {
-			return Request.Get(url)
-						.execute()
+			Request req = Request.Get(url);
+			LOGGER.info("Executing request: {}", req);
+			return req.execute()
 						.returnContent()
 						.asString(UTF8_CHARSET);
 		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
 			throw new GenericHTTPException(e);
 		}
 	}
