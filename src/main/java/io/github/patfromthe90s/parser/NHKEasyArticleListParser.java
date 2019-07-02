@@ -12,7 +12,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import io.github.patfromthe90s.model.ArticleLinkDate;
-import io.github.patfromthe90s.util.TempProperties;
+import io.github.patfromthe90s.util.PropertiesUtil;
+import io.github.patfromthe90s.util.PropertyKey;
 import io.github.patfromthe90s.util.TimeUtils;
 
 /**
@@ -43,7 +44,7 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 	
 	private ArticleLinkDate createFrom(String articleId, String strDate) {
 		// create the full URL using the given article Id.
-		String url = new StringBuilder(TempProperties.NHK_BASE_URL)
+		String url = new StringBuilder(PropertiesUtil.get(PropertyKey.NHK.BASE_URL))
 							.append(articleId)
 							.append("/")
 							.append(articleId)
@@ -51,7 +52,7 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 							.toString();
 		
 		// Convert given JST time to UTC.
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TempProperties.NHK_JSON_DATE_PATTERN);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PropertiesUtil.get(PropertyKey.NHK.JSON_DATE_PATTERN));
 		LocalDateTime ldt = LocalDateTime.parse(strDate, formatter);
 		ZonedDateTime utcTime = ZonedDateTime.of(ldt, TimeUtils.JST_ZONE_ID)
 										.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);

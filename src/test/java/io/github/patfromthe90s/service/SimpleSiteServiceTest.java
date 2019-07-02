@@ -14,9 +14,10 @@ import org.mockito.MockitoAnnotations;
 import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
 import io.github.patfromthe90s.exception.SiteServiceException;
+import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.http.Interactor;
 
-public class SimpleSiteServiceTest {
+public class SimpleSiteServiceTest extends GlobalTest {
 	
 	@Mock private Interactor mHtmlInteractor;
 	@Mock private Interactor mJsonInteractor;

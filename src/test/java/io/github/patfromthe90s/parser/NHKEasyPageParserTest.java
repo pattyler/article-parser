@@ -8,9 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.ArticleLinkDate;
 
-public class NHKEasyPageParserTest {
+public class NHKEasyPageParserTest extends GlobalTest {
 	
 	private static final String NEWS_ID_1_URL = "https://www3.nhk.or.jp/news/easy/k10011970611000/k10011970611000.html";
 	private static final String NEWS_ID_2_URL = "https://www3.nhk.or.jp/news/easy/k10011970391000/k10011970391000.html";

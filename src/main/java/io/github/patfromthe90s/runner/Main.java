@@ -25,7 +25,8 @@ import io.github.patfromthe90s.service.SimpleDaoService;
 import io.github.patfromthe90s.service.SimpleNHKEasyArticleGrabberService;
 import io.github.patfromthe90s.service.SimpleSiteService;
 import io.github.patfromthe90s.service.SiteService;
-import io.github.patfromthe90s.util.TempProperties;
+import io.github.patfromthe90s.util.PropertiesUtil;
+import io.github.patfromthe90s.util.PropertyKey;
 import io.github.patfromthe90s.viewer.ArticleViewer;
 
 /**
@@ -42,9 +43,11 @@ public class Main {
 	private final ArticleViewer articleViewer;
 	
 	public Main() {
-		// switch to Dependency Injection framework
+		// TODO switch to Dependency Injection framework in the future
+		PropertiesUtil.load("src\\main\\resources\\app.properties");
+		
 		SQLiteDataSource ds = new SQLiteDataSource();
-		ds.setUrl(TempProperties.DB_URL);
+		ds.setUrl(PropertiesUtil.get(PropertyKey.DB.URL));
 		
 		SiteDao siteDao = new SimpleSiteDao(ds);
 		ArticleDao articleDao = new SimpleArticleDao(ds);

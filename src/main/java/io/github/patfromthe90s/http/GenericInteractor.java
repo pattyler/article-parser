@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
-import io.github.patfromthe90s.util.Messages;
+import io.github.patfromthe90s.util.PropertiesUtil;
+import io.github.patfromthe90s.util.PropertyKey;
 
 /**
  * Generic implementation of {@link Interactor}
@@ -39,7 +40,7 @@ public abstract class GenericInteractor implements Interactor {
 					.map(Header::getValue)
 					.map( (String s) -> { return ZonedDateTime.parse(s, DateTimeFormatter.RFC_1123_DATE_TIME); })
 					.findFirst()
-					.orElseThrow(() -> new HeaderNotPresentException(Messages.HEADER_NO_LAST_MOD));	
+					.orElseThrow(() -> new HeaderNotPresentException(PropertiesUtil.get(PropertyKey.Message.HEADER_NO_LAST_MOD)));	
 
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);

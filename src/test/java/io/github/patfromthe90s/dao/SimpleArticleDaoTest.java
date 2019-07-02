@@ -25,9 +25,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.Article;
 
-public class SimpleArticleDaoTest {
+public class SimpleArticleDaoTest extends GlobalTest {
 	
 	@Mock private DataSource mDataSource;
 	@Mock private Connection mConnection;

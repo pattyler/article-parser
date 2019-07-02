@@ -20,12 +20,13 @@ import org.mockito.MockitoAnnotations;
 
 import io.github.patfromthe90s.exception.DaoServiceException;
 import io.github.patfromthe90s.exception.SiteServiceException;
+import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.model.ArticleLinkDate;
 import io.github.patfromthe90s.parser.ArticleListParser;
 import io.github.patfromthe90s.parser.ArticleParser;
 
-public class SimpleNHKEasyArticleGrabberServiceTest {
+public class SimpleNHKEasyArticleGrabberServiceTest extends GlobalTest {
 	
 	@Mock private DaoService mDaoService;
 	@Mock private SiteService mSiteService;

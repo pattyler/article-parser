@@ -14,7 +14,8 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.NodeVisitor;
 
 import io.github.patfromthe90s.model.Article;
-import io.github.patfromthe90s.util.TempProperties;
+import io.github.patfromthe90s.util.PropertiesUtil;
+import io.github.patfromthe90s.util.PropertyKey;
 import io.github.patfromthe90s.util.TimeUtils;
 
 /**
@@ -40,7 +41,7 @@ public class NHKEasyArticleParser implements ArticleParser {
 	private String extractData(Document htmlDoc) {
 		StringBuilder sb = new StringBuilder();
 
-		htmlDoc.select(TempProperties.SELECTOR_ARTICLE_CONTENT)
+		htmlDoc.select(PropertiesUtil.get(PropertyKey.Selector.ARTICLE_CONTENT))
 				.get(0)
 				.traverse(new NodeVisitor() {
 					
@@ -58,7 +59,7 @@ public class NHKEasyArticleParser implements ArticleParser {
 							TextNode tn = (TextNode) node;
 							if (tn.parent() instanceof Element) {
 								Element e = (Element) tn.parent();
-								if (!e.tagName().equals(TempProperties.NHK_HTML_TAG_FURIGANA) && !e.ownText().isEmpty())	// ignore furigana
+								if (!e.tagName().equals(PropertiesUtil.get(PropertyKey.NHK.HTML_TAG_FURIGANA)) && !e.ownText().isEmpty())	// ignore furigana
 									sb.append(tn.text());
 							}
 						}
@@ -71,16 +72,16 @@ public class NHKEasyArticleParser implements ArticleParser {
 	// This method relies on parsing tags and text elements from the HMTL page.
 	// Consider doing this in a different, more stable way.
 	private ZonedDateTime extractDateTime(Document htmlDoc) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TempProperties.NHK_HTML_DATE_PATTERN);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PropertiesUtil.get(PropertyKey.NHK.HTML_DATE_PATTERN));
 		// Date is part of "id" attribute of <body>. Format is newsXXX_XXX, so strip news
 		// and parse the section before the underscore.
-		String rawDate = htmlDoc.select(TempProperties.NHK_HTML_SELECTOR_DATE)
+		String rawDate = htmlDoc.select(PropertiesUtil.get(PropertyKey.NHK.HTML_SELECTOR_DATE))
 								.attr("id")
 								.substring(4)
 								.split("_")[0]; 
 		LocalDate localDate = LocalDate.parse(rawDate, formatter);
 		
-		String rawTime = htmlDoc.select(TempProperties.NHK_HTML_SELECTOR_TIME)
+		String rawTime = htmlDoc.select(PropertiesUtil.get(PropertyKey.NHK.HTML_SELECTOR_TIME))
 								.eachText()
 								.stream()
 								.findFirst()

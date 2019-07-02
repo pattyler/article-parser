@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
 import io.github.patfromthe90s.util.DaoUtils;
-import io.github.patfromthe90s.util.Messages;
-import io.github.patfromthe90s.util.SQLQueries;
+import io.github.patfromthe90s.util.PropertiesUtil;
+import io.github.patfromthe90s.util.PropertyKey;
 import io.github.patfromthe90s.util.TimeUtils;
 
 /**
@@ -38,27 +38,27 @@ public final class SimpleSiteDao implements SiteDao {
 
 	@Override
 	public ZonedDateTime getLastUpdated(final String url) throws RecordNotInDatabaseException, SQLException {
-		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.GET_LAST_UPDATED);
+		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, PropertiesUtil.get(PropertyKey.SQL.GET_LAST_UPDATED));
 		ps.setString(1, url);
-		LOGGER.info("Preapring to execute statement: [{}] using url {}", SQLQueries.GET_LAST_UPDATED, url);
+		LOGGER.info("Preapring to execute statement: [{}] using url {}", PropertiesUtil.get(PropertyKey.SQL.GET_LAST_UPDATED), url);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			LocalDateTime ldt = LocalDateTime.parse(rs.getString(1));
 			return ZonedDateTime.of(ldt, TimeUtils.UTC_ZONE_ID);
 		} else {
-			throw new RecordNotInDatabaseException(Messages.DB_NO_RECORD);
+			throw new RecordNotInDatabaseException(PropertiesUtil.get(PropertyKey.Message.DB_NO_RECORD));
 		}
 	}
 	
 	@Override
 	public void updateLastUpdated(final String url, final ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException {
-		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, SQLQueries.UPDATE_LAST_UPDATED);
+		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, PropertiesUtil.get(PropertyKey.SQL.UPDATE_LAST_UPDATED));
 		ps.setString(1, newLastUpdated.toLocalDateTime().toString());
 		ps.setString(2, url.toString());
-		LOGGER.info("Preapring to execute statement: [{}] using url {} and date {}", SQLQueries.UPDATE_LAST_UPDATED, url, newLastUpdated);
+		LOGGER.info("Preapring to execute statement: [{}] using url {} and date {}", PropertiesUtil.get(PropertyKey.SQL.UPDATE_LAST_UPDATED), url, newLastUpdated);
 		final int numUpdated = ps.executeUpdate();
 		if (numUpdated < 1)
-			throw new RecordNotInDatabaseException(Messages.DB_NO_RECORD);
+			throw new RecordNotInDatabaseException(PropertiesUtil.get(PropertyKey.Message.DB_NO_RECORD));
 	}
 	
 }

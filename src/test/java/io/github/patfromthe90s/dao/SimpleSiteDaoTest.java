@@ -25,9 +25,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
+import io.github.patfromthe90s.global.GlobalTest;
 
-@DisplayName("Test the logic in SimpleSiteDao")
-public class SimpleSiteDaoTest {
+public class SimpleSiteDaoTest extends GlobalTest {
 	
 	private static final String EXISTENT_URL = "http://www.google.com";
 	private static final String NON_EXISTENT_URL = "http://www.i-dont-exist-in-the-database.com";

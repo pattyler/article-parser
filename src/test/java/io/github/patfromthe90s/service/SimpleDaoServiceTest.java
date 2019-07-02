@@ -27,6 +27,7 @@ import io.github.patfromthe90s.dao.ArticleDao;
 import io.github.patfromthe90s.dao.SiteDao;
 import io.github.patfromthe90s.exception.DaoServiceException;
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
+import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.Article;
 
 /**
@@ -35,7 +36,7 @@ import io.github.patfromthe90s.model.Article;
  * @author Patrick
  *
  */
-public class SimpleDaoServiceTest {
+public class SimpleDaoServiceTest extends GlobalTest {
 	
 	private static final String ASSERT_THROWS_FAIL_MSG = "All exceptions should be mapped to DaoServiceException";
 	

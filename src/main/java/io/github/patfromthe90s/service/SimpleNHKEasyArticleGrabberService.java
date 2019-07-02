@@ -12,15 +12,16 @@ import io.github.patfromthe90s.exception.DaoServiceException;
 import io.github.patfromthe90s.exception.SiteServiceException;
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.model.ArticleLinkDate;
-import io.github.patfromthe90s.parser.ArticleParser;
 import io.github.patfromthe90s.parser.ArticleListParser;
-import io.github.patfromthe90s.util.TempProperties;
+import io.github.patfromthe90s.parser.ArticleParser;
+import io.github.patfromthe90s.util.PropertiesUtil;
+import io.github.patfromthe90s.util.PropertyKey;
 
 public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleNHKEasyArticleGrabberService.class);
-	private static final String SITE_URL = TempProperties.NHK_BASE_URL;
-	private static final String JSON_URL = TempProperties.NHK_JSON_URL;
+	private static final String SITE_URL = PropertiesUtil.get(PropertyKey.NHK.BASE_URL);
+	private static final String JSON_URL = PropertiesUtil.get(PropertyKey.NHK.JSON_URL);
 	
 	private final DaoService daoService;
 	private final SiteService siteService;
