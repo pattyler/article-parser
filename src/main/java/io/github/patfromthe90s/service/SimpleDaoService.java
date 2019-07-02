@@ -45,7 +45,7 @@ public final class SimpleDaoService implements DaoService {
 	@Override
 	public void updateLastUpdated(final String url, ZonedDateTime newLastUpdated) throws DaoServiceException {
 		try {
-			newLastUpdated = newLastUpdated.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
+			newLastUpdated = TimeUtils.toUtc(newLastUpdated);
 			LOGGER.info("Updating last updated using URL {} and date {}", url, newLastUpdated);
 			siteDao.updateLastUpdated(url, newLastUpdated);
 		} catch (RecordNotInDatabaseException | SQLException e) {
@@ -57,11 +57,13 @@ public final class SimpleDaoService implements DaoService {
 	@Override
 	public List<Article> getArticlesBetween(ZonedDateTime from, ZonedDateTime to) throws DaoServiceException {
 		try {
-			from = from.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
-			to = to.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
+			LOGGER.debug("Mapping dates from [{}] and [{}]", from, to);
+			from = TimeUtils.toUtc(from);
+			to = TimeUtils.toUtc(to);
+			LOGGER.debug("Mapped dates to [{}] and [{}]", from, to);
 			return articleDao.getArticlesBetween(from, to);
 		} catch (SQLException e) {
-			// TODO handle t//his properly
+			LOGGER.error(e.getMessage(), e);
 			throw new DaoServiceException(e);
 		}
 	}
@@ -71,7 +73,7 @@ public final class SimpleDaoService implements DaoService {
 		try {
 			articleDao.insertArticle(article);
 		} catch (SQLException e) {
-			// TODO handle this properly
+			LOGGER.error(e.getMessage(), e);
 			throw new DaoServiceException(e);
 		}
 	}

@@ -2,7 +2,8 @@ package io.github.patfromthe90s.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,41 +22,36 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import io.github.patfromthe90s.model.Article;
 
 public class SimpleArticleDaoTest {
 	
-	private DataSource mDataSource;
-	private Connection mConnection;
-	private PreparedStatement mPreparedStatement;
-	private ResultSet mResultSet;
+	@Mock private DataSource mDataSource;
+	@Mock private Connection mConnection;
+	@Mock private PreparedStatement mPreparedStatement;
+	@Mock private ResultSet mResultSet;
 	
 	private ArticleDao articleDao;
 	
 	@BeforeEach
 	public void setup() throws SQLException {
-		// begin mock setup
-		mDataSource = Mockito.mock(DataSource.class);
-		mConnection = Mockito.mock(Connection.class);
-		mPreparedStatement = Mockito.mock(PreparedStatement.class);
-		mResultSet = Mockito.mock(ResultSet.class);
-		Mockito.when(mDataSource.getConnection()).thenReturn(mConnection);
-		Mockito.when(mConnection.prepareStatement(Mockito.anyString())).thenReturn(mPreparedStatement);
-		// end mock setup
+		MockitoAnnotations.initMocks(this);
+		when(mDataSource.getConnection()).thenReturn(mConnection);
+		when(mConnection.prepareStatement(anyString())).thenReturn(mPreparedStatement);
 		
 		articleDao = new SimpleArticleDao(mDataSource);
 	}
 	
 	@Nested
-	@DisplayName("Test for success")
-	class success {
+	@DisplayName("When two dates are given")
+	class whenValidDatesGiven {
 		
-		@DisplayName("When a result is returned from the database in getArticlesBetween()")
+		@DisplayName("When results from database, then populated list returned.")
 		@Test
-		public void testGetArticlesBetween() throws MalformedURLException, SQLException {
-			// begin data setup
+		public void whenResults_thenListReturned() throws MalformedURLException, SQLException {
 			final String TEST_DATA = "test";
 			final String STR_URL = "http://test.com";
 			final URL URL = new URL(STR_URL);
@@ -67,58 +63,28 @@ public class SimpleArticleDaoTest {
 											.setData(TEST_DATA)
 											.setDate(ARTICLE_DATE)
 											.setUrl(STR_URL);
-			// end data setup
 			
-			// begin mock setup
-			Mockito.when(mPreparedStatement.executeQuery()).thenReturn(mResultSet);
-			Mockito.when(mResultSet.next()).thenReturn(true).thenReturn(false); // make sure to avoid infinite loop
-			Mockito.when(mResultSet.getString(1)).thenReturn(URL.toString());
-			Mockito.when(mResultSet.getString(2)).thenReturn(TEST_DATA);
-			Mockito.when(mResultSet.getString(3)).thenReturn(LOCAL_ARTICLE_DATE.toString());
-			// end mock setup
+			when(mPreparedStatement.executeQuery()).thenReturn(mResultSet);
+			when(mResultSet.next()).thenReturn(true).thenReturn(false); // make sure to avoid infinite loop
+			when(mResultSet.getString(1)).thenReturn(URL.toString());
+			when(mResultSet.getString(2)).thenReturn(TEST_DATA);
+			when(mResultSet.getString(3)).thenReturn(LOCAL_ARTICLE_DATE.toString());
 			
 			List<Article> articles = articleDao.getArticlesBetween(FROM, TO);
 			assertEquals(1, articles.size());
 			assertTrue(EXPECTED_ARTICLE.equals(articles.get(0)));
 		}
 		
-		@DisplayName("When no result is returned from the database in getArticlesBetween()")
+		@DisplayName("When no results from database, then empty list returned. ")
 		@Test
-		public void testGetArticlesBetweenEmpty() throws MalformedURLException, SQLException {
-			// begin data setup
+		public void whenNoResults_thenEmptyListReturned() throws MalformedURLException, SQLException {
 			final ZonedDateTime FROM = ZonedDateTime.of(LocalDateTime.of(11990, 8, 24, 23, 40), ZoneId.of("UTC"));
 			final ZonedDateTime TO = ZonedDateTime.of(LocalDateTime.of(12015, 06, 24, 23, 15), ZoneId.of("UTC"));
-			// end data setup
-			
-			// begin mock setup
-			Mockito.when(mPreparedStatement.executeQuery()).thenReturn(mResultSet);
-			Mockito.when(mResultSet.next()).thenReturn(false);
-			// end mock setup
+			when(mPreparedStatement.executeQuery()).thenReturn(mResultSet);
+			when(mResultSet.next()).thenReturn(false);
 			
 			List<Article> articles = articleDao.getArticlesBetween(FROM, TO);
 			assertEquals(0, articles.size());
-		}
-		
-		@DisplayName("by checking no exception thrown from insertArticle()")
-		@Test
-		public void testInsertArticleNoException() throws SQLException {
-			// begin data setup
-			final Article article = Article.create()
-										.setData("test")
-										.setDate(ZonedDateTime.now())
-										.setUrl("http://www.google.com");
-			// end data setup
-			
-			// being mock setup
-			Mockito.when(mPreparedStatement.executeUpdate()).thenReturn(1);
-			// end mock setup
-			
-			try {
-				articleDao.insertArticle(article);
-			} catch (SQLException e) {
-				fail("Unexpected exception thrown");
-				throw e;
-			}
 		}
 		
 	}

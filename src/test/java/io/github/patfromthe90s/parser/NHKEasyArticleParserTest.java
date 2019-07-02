@@ -42,7 +42,7 @@ public class NHKEasyArticleParserTest {
 	}
 	
 	@Test
-	@DisplayName("When given a HTML page, then it is parsed correctly and an Article returned")
+	@DisplayName("When given a HTML page, then parsed correctly and Article returned")
 	public void whenGivenHtml_thenArticleReturnedCorrect() {
 		Article parsedArticle = parser.parse(EXAMPLE_ARTICLE_HTML);
 		assertEquals(EXAMPLE_ARTICLE_DATE, parsedArticle.getDate());
