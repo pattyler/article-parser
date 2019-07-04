@@ -85,6 +85,8 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 
 	@Override
 	public void updateLastUpdated() {
+		// TODO this should be done using the Articles, rather than another HTTP request? Maybe an SQL statement in the database
+		// Reason for using HTTP request is original plan was to have a notification if there are new articles (without grabbing them)
 		try {
 			ZonedDateTime siteLastUpdated = siteService.getLastUpdated(JSON_URL);
 			daoService.updateLastUpdated(SITE_URL, siteLastUpdated);

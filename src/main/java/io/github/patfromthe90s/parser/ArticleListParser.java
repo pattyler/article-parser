@@ -6,8 +6,9 @@ import io.github.patfromthe90s.model.Article;
 
 /**
  * Interface for parsing data into a <code>List</code> of semi-populated articles<br/>
- * The data may be in various forms, suchs as HTML or JSON, and how detailed each {@link Article} is populated is
- * implementation-dependent.
+ * The data may be in various forms, suchs as HTML or JSON. <br />
+ * how detailed each {@link Article} is populated is implementation-dependent, and it's expected 
+ * that an {@link ArticleParser} will be used afterwards.
  * 
  * @author Patrick
  *
