@@ -11,7 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import io.github.patfromthe90s.model.ArticleLinkDate;
+import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.util.PropertiesUtil;
 import io.github.patfromthe90s.util.PropertyKey;
 import io.github.patfromthe90s.util.TimeUtils;
@@ -28,21 +28,21 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 	 * Expects a well-formed JSON array formatted as a <code>String</code>
 	 */
 	@Override
-	public List<ArticleLinkDate> parse(String json) {
-		List<ArticleLinkDate> articleLinkDates = new ArrayList<>();
+	public List<Article> parse(String json) {
+		List<Article> articles = new ArrayList<>();
 		
 		JsonArray ja = new JsonParser().parse(json).getAsJsonArray();
 		StreamSupport.stream(ja.spliterator(), false)
-				.map(JsonElement::getAsJsonObject)
-				.forEach(o -> articleLinkDates.add(
-								createFrom(o.get("news_id").getAsString(), 
-										o.get("news_prearranged_time").getAsString())
-						));
-					
-		return articleLinkDates;
+					.map(JsonElement::getAsJsonObject)
+					.forEach(o -> articles.add(
+									createFrom(o.get("news_id").getAsString(), 
+											   o.get("news_prearranged_time").getAsString())
+							));
+						
+		return articles;
 	}
 	
-	private ArticleLinkDate createFrom(String articleId, String strDate) {
+	private Article createFrom(String articleId, String strDate) {
 		// create the full URL using the given article Id.
 		String url = new StringBuilder(PropertiesUtil.get(PropertyKey.NHK.BASE_URL))
 							.append(articleId)
@@ -54,9 +54,11 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 		// Convert given JST time to UTC.
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PropertiesUtil.get(PropertyKey.NHK.JSON_DATE_PATTERN));
 		LocalDateTime ldt = LocalDateTime.parse(strDate, formatter);
-		ZonedDateTime utcTime = ZonedDateTime.of(ldt, TimeUtils.JST_ZONE_ID)
+		ZonedDateTime utcTime = ZonedDateTime.of(ldt, TimeUtils.JST_ZONE_ID) // Datetimes returned in JSON always JST.
 										.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
-		return new ArticleLinkDate(url, utcTime);
+		return Article.create()
+						.setDate(utcTime)
+						.setUrl(url);
 	}
 
 }

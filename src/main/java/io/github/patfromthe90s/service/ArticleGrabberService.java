@@ -2,7 +2,7 @@ package io.github.patfromthe90s.service;
 
 import java.util.List;
 
-import io.github.patfromthe90s.model.ArticleLinkDate;
+import io.github.patfromthe90s.model.Article;
 
 /**
  * Service for grabbing articles from a web-site. </br>
@@ -16,19 +16,19 @@ import io.github.patfromthe90s.model.ArticleLinkDate;
 public interface ArticleGrabberService {
 
 	/**
-	 * Checks for, and returns, any articles that should be grabbed. <br/>
+	 * Grabs and returns articles. <br/>
 	 * This method essentially defines the rule by which this Service should download articles.
 	 * 
-	 * @return THe <code>List</code> of articles to grab, or the empty list if there are none.
+	 * @return <code>List</code> of populated articles, or the empty list if there are none.
 	 */
-	public List<ArticleLinkDate> articlesToGrab();
+	public List<Article> grabArticles();
 	
 	/**
 	 * 
 	 * @param articleLinkDates
 	 * @return
 	 */
-	public int grabAndPersist(List<ArticleLinkDate> articleLinkDates);
+	public void persist(List<Article> articles);
 	
 	/**
 	 * Update the database site table to contain the most recent article as lastUpdated. <br/>

@@ -1,11 +1,5 @@
 package io.github.patfromthe90s.parser;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,7 +10,6 @@ import org.jsoup.select.NodeVisitor;
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.util.PropertiesUtil;
 import io.github.patfromthe90s.util.PropertyKey;
-import io.github.patfromthe90s.util.TimeUtils;
 
 /**
  * Implementation of {@link ArticleParser} for NHK Easy News (https://www3.nhk.or.jp/news/easy/).
@@ -27,15 +20,11 @@ import io.github.patfromthe90s.util.TimeUtils;
 public class NHKEasyArticleParser implements ArticleParser {
 
 	@Override
-	public Article parse(String html) {
+	public Article parse(Article article, String html) {
 		Document htmlDoc = Jsoup.parse(html);
-		String data = extractData(htmlDoc);
-		ZonedDateTime date = extractDateTime(htmlDoc);
-		//String title = extractTitle(htmlDoc);
-		
-		return Article.create()
-						.setData(data)
-						.setDate(date);
+		String data = extractData(htmlDoc);	
+		article.setData(data);
+		return article;
 	}
 	
 	private String extractData(Document htmlDoc) {
@@ -68,33 +57,5 @@ public class NHKEasyArticleParser implements ArticleParser {
 		
 		return sb.toString();
 	}
-	
-	// This method relies on parsing tags and text elements from the HMTL page.
-	// Consider doing this in a different, more stable way.
-	private ZonedDateTime extractDateTime(Document htmlDoc) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PropertiesUtil.get(PropertyKey.NHK.HTML_DATE_PATTERN));
-		// Date is part of "id" attribute of <body>. Format is newsXXX_XXX, so strip news
-		// and parse the section before the underscore.
-		String rawDate = htmlDoc.select(PropertiesUtil.get(PropertyKey.NHK.HTML_SELECTOR_DATE))
-								.attr("id")
-								.substring(4)
-								.split("_")[0]; 
-		LocalDate localDate = LocalDate.parse(rawDate, formatter);
-		
-		String rawTime = htmlDoc.select(PropertiesUtil.get(PropertyKey.NHK.HTML_SELECTOR_TIME))
-								.eachText()
-								.stream()
-								.findFirst()
-								.get()
-								.split(" ")[1];
-		int hour = Integer.valueOf(rawTime.substring(0, 2));
-		int minute = Integer.valueOf(rawTime.substring(3, 5));
-		LocalTime localTime = LocalTime.of(hour, minute);
-		
-		return ZonedDateTime.of(LocalDateTime.of(localDate, localTime), 
-								TimeUtils.JST_ZONE_ID)
-							.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
-	}
-
 
 }

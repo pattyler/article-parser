@@ -14,7 +14,7 @@ import io.github.patfromthe90s.dao.SiteDao;
 import io.github.patfromthe90s.http.Interactor;
 import io.github.patfromthe90s.http.SimpleHTMLInteractor;
 import io.github.patfromthe90s.http.SimpleJsonInteractor;
-import io.github.patfromthe90s.model.ArticleLinkDate;
+import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.parser.ArticleListParser;
 import io.github.patfromthe90s.parser.ArticleParser;
 import io.github.patfromthe90s.parser.NHKEasyArticleListParser;
@@ -66,8 +66,8 @@ public class Main {
 	}
 
 	public void run() {
-		List<ArticleLinkDate> articlesToGrab = articleGrabberService.articlesToGrab();
-		articleGrabberService.grabAndPersist(articlesToGrab);
+		List<Article> articles = articleGrabberService.grabArticles();
+		articleGrabberService.persist(articles);
 		articleGrabberService.updateLastUpdated();
 	}
 	

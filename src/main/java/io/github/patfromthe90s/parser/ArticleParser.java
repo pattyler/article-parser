@@ -3,7 +3,7 @@ package io.github.patfromthe90s.parser;
 import io.github.patfromthe90s.model.Article;
 
 /**
- * Interface for parsing HTML articles into a model object.
+ * Interface for parsing HTML and populating {@link Article} objects.
  * 
  * @author Patrick
  *
@@ -11,11 +11,14 @@ import io.github.patfromthe90s.model.Article;
 public interface ArticleParser {
 	
 	/**
-	 * Given a HTML page represented as a <code>String</code>, parse it and return the corresponding
+	 * Given a HTML page represented as a <code>String</code>, parse it and add any required data
+	 * to the given {@link Article}.
+	 * 
 	 * {@link Article}.
+	 * @param article A semi-populated article. 
 	 * @param html The HTML to parse.
-	 * @return The {@link Article} denoted by the given HTML.
+	 * @return <code>article</code>, with more data added.
 	 */
-	public Article parse(String html);
+	public Article parse(Article article, String html);
 
 }

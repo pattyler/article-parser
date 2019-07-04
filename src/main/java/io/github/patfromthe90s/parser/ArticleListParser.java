@@ -2,24 +2,25 @@ package io.github.patfromthe90s.parser;
 
 import java.util.List;
 
-import io.github.patfromthe90s.model.ArticleLinkDate;
+import io.github.patfromthe90s.model.Article;
 
 /**
- * Interface for parsing data into a <code>List</code> containing links to articles and the dates they were added. <br/>
- * The data may be in various forms, suchs as HTML or JSON.
+ * Interface for parsing data into a <code>List</code> of semi-populated articles<br/>
+ * The data may be in various forms, suchs as HTML or JSON, and how detailed each {@link Article} is populated is
+ * implementation-dependent.
  * 
  * @author Patrick
  *
  */
-public interface ArticleListParser { // IJsonParser, and not JsonParser, to avoid name conflict with GSON library
+public interface ArticleListParser { 
 	
 	/**
-	 * Parse the data and extract any links that point to articles, along with the 
-	 * date the article was added.
+	 * Parse the data and extract some basic information for each article (e.g. link, date added, etc.) <br/>
+	 * This method <i>must</i> return the link to each article at a minimum.
 	 * 
 	 * @param data The data (e.g. HTML, JSON) to be parsed.
-	 * @return A list of all discovered article links / dates added.
+	 * @return A list of all discovered articles.
 	 */
-	public List<ArticleLinkDate> parse(String data);
+	public List<Article> parse(String data);
 
 }
