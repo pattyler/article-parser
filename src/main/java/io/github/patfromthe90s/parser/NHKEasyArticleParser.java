@@ -6,10 +6,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.NodeVisitor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import io.github.patfromthe90s.model.Article;
-import io.github.patfromthe90s.util.PropertiesUtil;
-import io.github.patfromthe90s.util.PropertyKey;
 
 /**
  * Implementation of {@link ArticleParser} for NHK Easy News (https://www3.nhk.or.jp/news/easy/).
@@ -17,7 +17,14 @@ import io.github.patfromthe90s.util.PropertyKey;
  * @author Patrick
  *
  */
+@Component
 public class NHKEasyArticleParser implements ArticleParser {
+	
+	@Value("${selector.article.content}")
+	private String articleContentSelector;
+	
+	@Value("${nhk.tag.furigana}")
+	private String htmlTagFurigana;
 
 	@Override
 	public Article parse(Article article, String html) {
@@ -30,7 +37,7 @@ public class NHKEasyArticleParser implements ArticleParser {
 	private String extractData(Document htmlDoc) {
 		StringBuilder sb = new StringBuilder();
 
-		htmlDoc.select(PropertiesUtil.get(PropertyKey.Selector.ARTICLE_CONTENT))
+		htmlDoc.select(articleContentSelector)
 				.get(0)
 				.traverse(new NodeVisitor() {
 					
@@ -48,7 +55,7 @@ public class NHKEasyArticleParser implements ArticleParser {
 							TextNode tn = (TextNode) node;
 							if (tn.parent() instanceof Element) {
 								Element e = (Element) tn.parent();
-								if (!e.tagName().equals(PropertiesUtil.get(PropertyKey.NHK.HTML_TAG_FURIGANA)) && !e.ownText().isEmpty())	// ignore furigana
+								if (!e.tagName().equals(htmlTagFurigana) && !e.ownText().isEmpty())	// ignore furigana
 									sb.append(tn.text());
 							}
 						}

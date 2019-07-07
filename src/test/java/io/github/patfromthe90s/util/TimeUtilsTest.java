@@ -9,9 +9,7 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import io.github.patfromthe90s.global.GlobalTest;
-
-public class TimeUtilsTest extends GlobalTest {
+public class TimeUtilsTest {
 	
 	@Test
 	@DisplayName("When non-UTC time given, then returned value is converted")

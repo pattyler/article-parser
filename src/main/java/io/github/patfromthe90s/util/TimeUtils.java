@@ -11,16 +11,12 @@ import java.time.ZonedDateTime;
  */
 public final class TimeUtils {
 	
-	public static final String UTC_ZONE_ID_STR = "UTC";
-	public static final String JST_ZONE_ID_STR_SHORT = "JST";
-	public static final String JST_ZONE_ID_STR;
-	public static final ZoneId UTC_ZONE_ID;
-	public static final ZoneId JST_ZONE_ID;
+	public static final ZoneId ZONE_UTC;
+	public static final ZoneId ZONE_JST;
 	
 	static {
-		UTC_ZONE_ID = ZoneId.of(UTC_ZONE_ID_STR);
-		JST_ZONE_ID_STR = ZoneId.SHORT_IDS.get(JST_ZONE_ID_STR_SHORT);
-		JST_ZONE_ID = ZoneId.of(JST_ZONE_ID_STR);
+		ZONE_UTC = ZoneId.of("UTC");
+		ZONE_JST = ZoneId.of("JST", ZoneId.SHORT_IDS);
 		
 	}
 
@@ -30,8 +26,8 @@ public final class TimeUtils {
 	 * @return THe UTC representation of <code>zdt</code>
 	 */
 	public static ZonedDateTime toUtc(ZonedDateTime zdt) {
-		if (!zdt.getZone().equals(UTC_ZONE_ID))
-			zdt = zdt.withZoneSameInstant(UTC_ZONE_ID);
+		if (!zdt.getZone().equals(ZONE_UTC))
+			zdt = zdt.withZoneSameInstant(ZONE_UTC);
 		
 		return zdt;
 	}

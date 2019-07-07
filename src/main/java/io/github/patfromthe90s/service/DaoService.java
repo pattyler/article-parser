@@ -28,16 +28,13 @@ public interface DaoService {
 	
 	
 	/**
-	 * Associate the given {@code url} with {@code newLastUpdated}.<br/>
-	 * Assumes {@code newLastUpdated} is more recent than the current value in the database. <br/>
-	 * <code>newLastUpdated</code> is converted to UTC if it is not already.
 	 * 
 	 * @param url <code>URL</code> representing site to update.
-	 * @param newLastUpdated New {@code lastUpdated} time to insert.
 	 * @throws DaoServiceException if the {@code url} doesn't exist in the database, or if something else
 	 * went wrong related to the database.
+	 * @see {@link SiteService}
 	 */
-	public void updateLastUpdated(String url, ZonedDateTime newLastUpdated) throws DaoServiceException;
+	public void updateLastUpdated(String url) throws DaoServiceException;
 	
 	/**
 	 * Returns any articles that were written between {@code from} (inclusive) and {@code to} (inclusive). <br/>

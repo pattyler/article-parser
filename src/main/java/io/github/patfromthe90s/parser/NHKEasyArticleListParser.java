@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import io.github.patfromthe90s.model.Article;
-import io.github.patfromthe90s.util.PropertiesUtil;
-import io.github.patfromthe90s.util.PropertyKey;
 import io.github.patfromthe90s.util.TimeUtils;
 
 /**
@@ -22,7 +23,14 @@ import io.github.patfromthe90s.util.TimeUtils;
  * @author Patrick
  *
  */
+@Component
 public class NHKEasyArticleListParser implements ArticleListParser {
+	
+	@Value("${nhk.url.base}")
+	private String nhkBaseUrl;
+	
+	@Value("${nhk.datepattern.json}")
+	private String jsonDatePattern;
 	
 	/**
 	 * Expects a well-formed JSON array formatted as a <code>String</code>
@@ -44,7 +52,7 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 	
 	private Article createFrom(String articleId, String strDate) {
 		// create the full URL using the given article Id.
-		String url = new StringBuilder(PropertiesUtil.get(PropertyKey.NHK.BASE_URL))
+		String url = new StringBuilder(nhkBaseUrl)
 							.append(articleId)
 							.append("/")
 							.append(articleId)
@@ -52,10 +60,10 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 							.toString();
 		
 		// Convert given JST time to UTC.
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PropertiesUtil.get(PropertyKey.NHK.JSON_DATE_PATTERN));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(jsonDatePattern);
 		LocalDateTime ldt = LocalDateTime.parse(strDate, formatter);
-		ZonedDateTime utcTime = ZonedDateTime.of(ldt, TimeUtils.JST_ZONE_ID) // Datetimes returned in JSON always JST.
-										.withZoneSameInstant(TimeUtils.UTC_ZONE_ID);
+		ZonedDateTime utcTime = ZonedDateTime.of(ldt, TimeUtils.ZONE_JST) // Datetimes returned in JSON always JST.
+										.withZoneSameInstant(TimeUtils.ZONE_UTC);
 		return Article.create()
 						.setDate(utcTime)
 						.setUrl(url);

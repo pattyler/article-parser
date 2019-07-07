@@ -10,11 +10,15 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.Article;
 
-public class NHKEasyPageParserTest extends GlobalTest {
+@SpringBootTest
+@ActiveProfiles("test")
+public class NHKEasyPageParserTest {
 	
 	private static final String NEWS_ID_1_URL = "https://www3.nhk.or.jp/news/easy/k10011970611000/k10011970611000.html";
 	private static final String NEWS_ID_2_URL = "https://www3.nhk.or.jp/news/easy/k10011970391000/k10011970391000.html";
@@ -38,12 +42,8 @@ public class NHKEasyPageParserTest extends GlobalTest {
 			"	\"title\": \"\\u6771\\u4eac\\u30aa\\u30ea\\u30f3\\u30d4\\u30c3\\u30af\\u3067\\u306f\\u30da\\u30c3\\u30c8\\u30dc\\u30c8\\u30eb\\u3092\\u6301\\u3063\\u3066\\u4f1a\\u5834\\u306b\\u5165\\u308c\\u308b\"\r\n" + 
 			"}]";
 	
+	@Autowired
 	private ArticleListParser articleListParser;
-	
-	@BeforeEach
-	public void setup() {
-		articleListParser = new NHKEasyArticleListParser();
-	}
 	
 	@Test
 	@DisplayName("When JSON array is empty, then returned List is empty")

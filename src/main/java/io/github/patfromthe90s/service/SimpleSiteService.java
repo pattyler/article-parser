@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
@@ -16,6 +17,7 @@ import io.github.patfromthe90s.http.Interactor;
  * @author Patrick
  *
  */
+@Service
 public class SimpleSiteService implements SiteService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSiteService.class);

@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,6 @@ import io.github.patfromthe90s.dao.ArticleDao;
 import io.github.patfromthe90s.dao.SiteDao;
 import io.github.patfromthe90s.exception.DaoServiceException;
 import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
-import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.Article;
 
 /**
@@ -36,7 +34,7 @@ import io.github.patfromthe90s.model.Article;
  * @author Patrick
  *
  */
-public class SimpleDaoServiceTest extends GlobalTest {
+public class SimpleDaoServiceTest {
 	
 	private static final String ASSERT_THROWS_FAIL_MSG = "All exceptions should be mapped to DaoServiceException";
 	
@@ -44,9 +42,6 @@ public class SimpleDaoServiceTest extends GlobalTest {
 	@Mock private ArticleDao mArticleDao;
 	@Mock private DaoService simpleDaoService;
 	
-	private final String STR_DATE = "Mon, 24 Jun 2019 16:00:00 GMT";
-	private final ZonedDateTime VALID_DATE = ZonedDateTime.parse(STR_DATE, DateTimeFormatter.RFC_1123_DATE_TIME)
-														.withZoneSameInstant(ZoneId.of("UTC"));
 	private final String VALID_URL = "http://www.google.com";
 	
 	@BeforeEach
@@ -82,14 +77,14 @@ public class SimpleDaoServiceTest extends GlobalTest {
 		@DisplayName("And is RecordNotInDatabae, then correctly mapped.")
 		public void andIsRecordNotInDatabase_thenCorrectlyMapped() throws RecordNotInDatabaseException, SQLException {
 			when(mSiteDao.getLastUpdated(anyString())).thenThrow(RecordNotInDatabaseException.class);
-			doThrow(RecordNotInDatabaseException.class).when(mSiteDao).updateLastUpdated(VALID_URL, VALID_DATE);
+			doThrow(RecordNotInDatabaseException.class).when(mSiteDao).updateLastUpdated(VALID_URL);
 			
 			assertThrows(DaoServiceException.class, 
 					() -> simpleDaoService.getLastUpdated(VALID_URL),
 					ASSERT_THROWS_FAIL_MSG);
 			
 			assertThrows(DaoServiceException.class, 
-					() -> simpleDaoService.updateLastUpdated(VALID_URL, VALID_DATE),
+					() -> simpleDaoService.updateLastUpdated(VALID_URL),
 					ASSERT_THROWS_FAIL_MSG);
 			
 		}
@@ -99,7 +94,7 @@ public class SimpleDaoServiceTest extends GlobalTest {
 		public void getInsertArticleException() throws SQLException, RecordNotInDatabaseException {
 			when(mSiteDao.getLastUpdated(anyString())).thenThrow(SQLException.class);
 			when(mArticleDao.getArticlesBetween(any(), any())).thenThrow(SQLException.class);
-			doThrow(SQLException.class).when(mSiteDao).updateLastUpdated(any(), any());
+			doThrow(SQLException.class).when(mSiteDao).updateLastUpdated(any());
 			doThrow(SQLException.class).when(mArticleDao).insertArticle(any(Article.class));
 			
 			assertThrows(DaoServiceException.class, 
@@ -107,7 +102,7 @@ public class SimpleDaoServiceTest extends GlobalTest {
 					ASSERT_THROWS_FAIL_MSG);
 			
 			assertThrows(DaoServiceException.class, 
-					() -> simpleDaoService.updateLastUpdated(VALID_URL, ZonedDateTime.now()),
+					() -> simpleDaoService.updateLastUpdated(VALID_URL),
 					ASSERT_THROWS_FAIL_MSG);
 			
 			assertThrows(DaoServiceException.class, 

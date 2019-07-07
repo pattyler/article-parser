@@ -27,15 +27,14 @@ public interface SiteDao {
 	public ZonedDateTime getLastUpdated(String url) throws RecordNotInDatabaseException, SQLException;
 	
 	/**
-	 * Associate the given {@code url} in the database with {@code newLastUpdated}.<br/>
-	 * Assumes {@code newLastUpdated} is more recent than the current value in the database.
-	 * 
+	 * Update the database row containing <code>url</code> in the <code>site</code> table and set the <code>lastUpdated</code> 
+	 * column to equal the <code>date</code> column of the most recent article associated with this <code>url</code> in
+	 * the <code>article</code> table. 
 	 * 
 	 * @param url <code>URL</code> representing site to update.
-	 * @param newLastUpdated New {@code lastUpdated} time to insert into the database.
 	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
-	 * @throws SQLException If there is some underlying problem.
+	 * @throws SQLException If there was some underlying problem.
 	 */
-	public void updateLastUpdated(String url, ZonedDateTime newLastUpdated) throws RecordNotInDatabaseException, SQLException;
+	public void updateLastUpdated(String url) throws RecordNotInDatabaseException, SQLException;
 
 }

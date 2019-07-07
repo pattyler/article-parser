@@ -24,10 +24,8 @@ public class ArticleViewer {
 					.stream()
 					.map(a -> a.getData())
 					.forEach(s -> { 
-						System.out.println();
 						Arrays.stream(s.split("。"))
-								.forEach(System.out::println);
-						System.out.println();
+								.forEach(LOGGER::info);
 						
 					});
 		} catch (DaoServiceException e) {

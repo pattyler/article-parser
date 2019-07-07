@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import io.github.patfromthe90s.dao.ArticleDao;
 import io.github.patfromthe90s.dao.SiteDao;
@@ -19,6 +21,7 @@ import io.github.patfromthe90s.util.TimeUtils;
  * 
  * @author Patrick
  */
+@Service
 public final class SimpleDaoService implements DaoService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleDaoService.class);
@@ -26,7 +29,8 @@ public final class SimpleDaoService implements DaoService {
 	private final SiteDao siteDao;
 	private final ArticleDao articleDao;
 	
-	public SimpleDaoService(final SiteDao siteDao, final ArticleDao articleDao) {
+	@Autowired
+	public SimpleDaoService(SiteDao siteDao, ArticleDao articleDao) {
 		this.siteDao = siteDao;
 		this.articleDao = articleDao;
 	}
@@ -43,11 +47,10 @@ public final class SimpleDaoService implements DaoService {
 	}
 
 	@Override
-	public void updateLastUpdated(final String url, ZonedDateTime newLastUpdated) throws DaoServiceException {
+	public void updateLastUpdated(final String url) throws DaoServiceException {
 		try {
-			newLastUpdated = TimeUtils.toUtc(newLastUpdated);
-			LOGGER.info("Updating last updated using URL {} and date {}", url, newLastUpdated);
-			siteDao.updateLastUpdated(url, newLastUpdated);
+			LOGGER.info("Updating last updated using URL {} and date {}", url);
+			siteDao.updateLastUpdated(url);
 		} catch (RecordNotInDatabaseException | SQLException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new DaoServiceException(e);

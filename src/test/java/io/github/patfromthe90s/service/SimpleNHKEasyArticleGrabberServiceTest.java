@@ -10,21 +10,22 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import io.github.patfromthe90s.exception.DaoServiceException;
 import io.github.patfromthe90s.exception.SiteServiceException;
-import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.parser.ArticleListParser;
 import io.github.patfromthe90s.parser.ArticleParser;
 
-public class SimpleNHKEasyArticleGrabberServiceTest extends GlobalTest {
+@SpringBootTest
+public class SimpleNHKEasyArticleGrabberServiceTest {
 	
 	@Mock private DaoService mDaoService;
 	@Mock private SiteService mSiteService;

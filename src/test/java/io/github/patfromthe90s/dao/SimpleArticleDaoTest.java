@@ -24,17 +24,23 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
-import io.github.patfromthe90s.global.GlobalTest;
 import io.github.patfromthe90s.model.Article;
 
-public class SimpleArticleDaoTest extends GlobalTest {
+@SpringBootTest
+@ActiveProfiles("test")
+public class SimpleArticleDaoTest {
 	
-	@Mock private DataSource mDataSource;
+	@MockBean private DataSource mDataSource;
 	@Mock private Connection mConnection;
 	@Mock private PreparedStatement mPreparedStatement;
 	@Mock private ResultSet mResultSet;
 	
+	@Autowired
 	private ArticleDao articleDao;
 	
 	@BeforeEach
@@ -42,8 +48,6 @@ public class SimpleArticleDaoTest extends GlobalTest {
 		MockitoAnnotations.initMocks(this);
 		when(mDataSource.getConnection()).thenReturn(mConnection);
 		when(mConnection.prepareStatement(anyString())).thenReturn(mPreparedStatement);
-		
-		articleDao = new SimpleArticleDao(mDataSource);
 	}
 	
 	@Nested

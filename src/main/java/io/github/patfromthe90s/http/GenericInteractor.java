@@ -10,11 +10,10 @@ import org.apache.http.Header;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import io.github.patfromthe90s.exception.GenericHTTPException;
 import io.github.patfromthe90s.exception.HeaderNotPresentException;
-import io.github.patfromthe90s.util.PropertiesUtil;
-import io.github.patfromthe90s.util.PropertyKey;
 
 /**
  * Generic implementation of {@link Interactor}
@@ -25,6 +24,9 @@ public abstract class GenericInteractor implements Interactor {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericInteractor.class);
 	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8"); 
+	
+	@Value("${messages.http.noHeader}")
+	private String headerNoLastModMsg;
 	
 	@Override
 	public ZonedDateTime getLastUpdated(String url) throws GenericHTTPException, HeaderNotPresentException {
@@ -40,7 +42,7 @@ public abstract class GenericInteractor implements Interactor {
 					.map(Header::getValue)
 					.map( (String s) -> { return ZonedDateTime.parse(s, DateTimeFormatter.RFC_1123_DATE_TIME); })
 					.findFirst()
-					.orElseThrow(() -> new HeaderNotPresentException(PropertiesUtil.get(PropertyKey.Message.HEADER_NO_LAST_MOD)));	
+					.orElseThrow(() -> new HeaderNotPresentException(headerNoLastModMsg));	
 
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
