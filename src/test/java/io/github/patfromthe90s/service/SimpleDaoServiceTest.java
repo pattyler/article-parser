@@ -60,7 +60,7 @@ public class SimpleDaoServiceTest {
 		ZonedDateTime utcTo = nonUtcTo.withZoneSameInstant(ZoneId.of("UTC"));
 		
 		List<Article> articles = new ArrayList<>();
-		articles.add(Article.create());
+		articles.add(new Article());
 		doReturn(articles)
 			.when(mArticleDao)
 			.getArticlesBetween(utcFrom, utcTo);
@@ -110,7 +110,7 @@ public class SimpleDaoServiceTest {
 					ASSERT_THROWS_FAIL_MSG);
 			
 			assertThrows(DaoServiceException.class, 
-					() -> simpleDaoService.insertArticle(Article.create()),
+					() -> simpleDaoService.insertArticle(new Article()),
 					ASSERT_THROWS_FAIL_MSG);
 			
 		}

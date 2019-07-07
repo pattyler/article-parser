@@ -64,10 +64,9 @@ public class SimpleArticleDaoTest {
 			final ZonedDateTime ARTICLE_DATE = ZonedDateTime.of(LOCAL_ARTICLE_DATE, ZoneId.of("UTC"));
 			final ZonedDateTime FROM = ZonedDateTime.of(LocalDateTime.of(1990, 8, 24, 23, 40), ZoneId.of("UTC"));
 			final ZonedDateTime TO = ZonedDateTime.of(LocalDateTime.of(2015, 06, 24, 23, 15), ZoneId.of("UTC"));
-			final Article EXPECTED_ARTICLE = Article.create()
-											.setData(TEST_DATA)
-											.setDate(ARTICLE_DATE)
-											.setUrl(STR_URL);
+			final Article EXPECTED_ARTICLE = new Article().setData(TEST_DATA)
+														.setDate(ARTICLE_DATE)
+														.setUrl(STR_URL);
 			
 			when(mPreparedStatement.executeQuery()).thenReturn(mResultSet);
 			when(mResultSet.next()).thenReturn(true).thenReturn(false); // make sure to avoid infinite loop

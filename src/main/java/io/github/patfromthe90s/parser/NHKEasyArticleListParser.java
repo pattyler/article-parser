@@ -64,9 +64,8 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 		LocalDateTime ldt = LocalDateTime.parse(strDate, formatter);
 		ZonedDateTime utcTime = ZonedDateTime.of(ldt, TimeUtils.ZONE_JST) // Datetimes returned in JSON always JST.
 										.withZoneSameInstant(TimeUtils.ZONE_UTC);
-		return Article.create()
-						.setDate(utcTime)
-						.setUrl(url);
+		return new Article().setDate(utcTime)
+							.setUrl(url);
 	}
 
 }

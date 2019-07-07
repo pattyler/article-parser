@@ -11,17 +11,16 @@ import java.time.ZonedDateTime;
  */
 public final class Article {
 	
+	private Long id;
 	private String url;
 	private ZonedDateTime date;
 	private String data;
-	
-	// Builder pattern has been used to allow extensibility in the future, at the cost of 
-	// each class member variable not being declared final.
-	private Article() {
-	}
-	
-	public static Article create() {
-		return new Article();
+		
+	/*
+	 * <b>Warning:</b> Only to be used when returning a value from the database.
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	public Article setDate(ZonedDateTime date) {
@@ -49,6 +48,10 @@ public final class Article {
 
 	public String getData() {
 		return data;
+	}
+	
+	public Long getId() {
+		return id;
 	}
 
 	@Override

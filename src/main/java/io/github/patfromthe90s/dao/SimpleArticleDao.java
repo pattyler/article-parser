@@ -52,8 +52,7 @@ public final class SimpleArticleDao implements ArticleDao {
 		LOGGER.info("Preapring to execute statement: [{}] using dates {} and {}", getArticleStmt, strFrom, strTo);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			Article article = Article.create()
-									.setUrl(rs.getString(1))
+			Article article = new Article().setUrl(rs.getString(1))
 									.setData(rs.getString(2))
 									.setDate(ZonedDateTime.of(
 												LocalDateTime.parse(rs.getString(3)),

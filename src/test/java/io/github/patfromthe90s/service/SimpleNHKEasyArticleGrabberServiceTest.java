@@ -69,9 +69,9 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 		public void thenListReturned() throws SiteServiceException, DaoServiceException {
 			ZonedDateTime currentLastUpdated = ZonedDateTime.now().minusDays(10);
 			ZonedDateTime siteLastUpdated = ZonedDateTime.now().minusDays(1);
-			Article testArticle = Article.create().setDate(ZonedDateTime.now().minusDays(2))
-													.setData("test data")
-													.setUrl("http://test.com");
+			Article testArticle = new Article().setDate(ZonedDateTime.now().minusDays(2))
+												.setData("test data")
+												.setUrl("http://test.com");
 			List<Article> articles = new ArrayList<>();
 			articles.add(testArticle);
 			articles.add(testArticle);
@@ -91,8 +91,8 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 			ZonedDateTime mCurrentLastUpdated = ZonedDateTime.now().minusDays(10);
 			ZonedDateTime mSiteLastUpdated = ZonedDateTime.now().minusDays(1);	
 			List<Article> articles = new ArrayList<>();
-			articles.add(Article.create().setData("test data 1").setUrl("http://test.com").setDate(mCurrentLastUpdated.plusDays(1)));
-			articles.add(Article.create().setData("test data 2").setUrl("http://test.com").setDate(mCurrentLastUpdated.minusDays(1)));
+			articles.add(new Article().setData("test data 1").setUrl("http://test.com").setDate(mCurrentLastUpdated.plusDays(1)));
+			articles.add(new Article().setData("test data 2").setUrl("http://test.com").setDate(mCurrentLastUpdated.minusDays(1)));
 			when(mDaoService.getLastUpdated(anyString())).thenReturn(mCurrentLastUpdated);
 			when(mSiteService.getLastUpdated(anyString())).thenReturn(mSiteLastUpdated);
 			when(mSiteService.getJson(anyString())).thenReturn("[{'val':'test'}]");
@@ -130,14 +130,14 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 			ZonedDateTime currentLastUpdated = ZonedDateTime.now().minusDays(10);
 			ZonedDateTime siteLastUpdated = ZonedDateTime.now().minusDays(1);
 			// 2nd call throws an exception, so article2 should have null data and only article1 and article3 returned
-			Article article1 = Article.create().setData("test data 1")
-												.setUrl("http://test.com")
-												.setDate(currentLastUpdated.plusDays(2));
-			Article article2 = Article.create().setUrl("http://test.com")
-												.setDate(currentLastUpdated.plusDays(3));
-			Article article3 = Article.create().setData("test data 3")
-												.setUrl("http://test.com")
-												.setDate(currentLastUpdated.plusDays(4));
+			Article article1 = new Article().setData("test data 1")
+											.setUrl("http://test.com")
+											.setDate(currentLastUpdated.plusDays(2));
+			Article article2 = new Article().setUrl("http://test.com")
+											.setDate(currentLastUpdated.plusDays(3));
+			Article article3 = new Article().setData("test data 3")
+											.setUrl("http://test.com")
+											.setDate(currentLastUpdated.plusDays(4));
 			List<Article> articles = new ArrayList<>();
 			articles.add(article1);
 			articles.add(article2);

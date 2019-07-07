@@ -43,7 +43,7 @@ public class NHKEasyArticleParserTest {
 	@Test
 	@DisplayName("When given a HTML page, then parsed correctly and data added to Article")
 	public void whenGivenHtml_thenDataAddedToArticle() {
-		Article article = Article.create();
+		Article article = new Article();
 		Article parsedArticle = parser.parse(article, EXAMPLE_ARTICLE_HTML);
 		assertEquals(EXAMPLE_ARTICLE_DATA, parsedArticle.getData());
 	}
