@@ -50,9 +50,9 @@ public final class SimpleSiteDao implements SiteDao {
 
 	@Override
 	public ZonedDateTime getLastUpdated(final String url) throws RecordNotInDatabaseException, SQLException {
-		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, updateLastUpdatedStmt);
+		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, getLastUpdatedStmt);
 		ps.setString(1, url);
-		LOGGER.info("Preapring to execute statement: [{}] using url {}", updateLastUpdatedStmt, url);
+		LOGGER.info("Preapring to execute statement: [{}] using url {}", getLastUpdatedStmt, url);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			LocalDateTime ldt = LocalDateTime.parse(rs.getString(1));
