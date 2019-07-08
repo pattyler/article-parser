@@ -11,13 +11,16 @@ import java.time.ZonedDateTime;
  */
 public final class Article {
 	
-	private Long id;
+	private Long id;	// primary key
+	private String siteId;	// foreign key
 	private String url;
+	private String title;
 	private ZonedDateTime date;
 	private String data;
 		
 	/*
-	 * <b>Warning:</b> Only to be used when returning a value from the database.
+	 * <b>Warning:</b> Only to be used when returning a value from the database. <br/>
+	 * This is an auto-generated Primary Key.
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -50,24 +53,57 @@ public final class Article {
 		return data;
 	}
 	
+	/**
+	 * Primary key
+	 * @return
+	 */
 	public Long getId() {
 		return id;
 	}
 
+	/**
+	 * Foreign key
+	 * 
+	 * @return
+	 */
+	public String getSiteId() {
+		return siteId;
+	}
+
+	/**
+	 * Foreign key
+	 * 
+	 * @return
+	 */
+	public Article setSiteId(String siteId) {
+		this.siteId = siteId;
+		return this;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public Article setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+
 	@Override
 	public int hashCode() {
-		// Generated method
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((siteId == null) ? 0 : siteId.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		// Generate method
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -85,6 +121,21 @@ public final class Article {
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (siteId == null) {
+			if (other.siteId != null)
+				return false;
+		} else if (!siteId.equals(other.siteId))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
 		if (url == null) {
 			if (other.url != null)
 				return false;
@@ -95,9 +146,11 @@ public final class Article {
 
 	@Override
 	public String toString() {
-		// Generated method
-		return "Article [url=" + url + ", date=" + date + ", data=" + data + "]";
+		return "Article [id=" + id + ", siteId=" + siteId + ", url=" + url + ", title=" + title + ", date=" + date
+				+ ", data=" + data + "]";
 	}
+
+	
 	
 	
 	

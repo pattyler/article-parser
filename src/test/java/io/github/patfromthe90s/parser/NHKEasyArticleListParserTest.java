@@ -17,7 +17,7 @@ import io.github.patfromthe90s.model.Article;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class NHKEasyPageParserTest {
+public class NHKEasyArticleListParserTest {
 	
 	private static final String NEWS_ID_1_URL = "https://www3.nhk.or.jp/news/easy/k10011970611000/k10011970611000.html";
 	private static final String NEWS_ID_2_URL = "https://www3.nhk.or.jp/news/easy/k10011970391000/k10011970391000.html";
@@ -29,6 +29,10 @@ public class NHKEasyPageParserTest {
 																			LocalDateTime.parse("2019-06-28T11:25:00"), 
 																			ZoneId.of("JST", ZoneId.SHORT_IDS))
 																	.withZoneSameInstant(ZoneId.of("UTC"));
+	
+	private static final String NEWS_ID_1_TITLE = "アメリカ国境の川で亡くなった父と娘の写真がニュースになる";
+	private static final String NEWS_ID_2_TITLE = "東京オリンピックではペットボトルを持って会場に入れる";
+	
 	private static final String VALID_JSON = "[{\r\n" + 
 			"	\"top_priority_number\": \"1\",\r\n" + 
 			"	\"news_id\": \"k10011970611000\",\r\n" + 
@@ -58,7 +62,9 @@ public class NHKEasyPageParserTest {
 		assertEquals(2, list.size());
 		assertEquals(NEWS_ID_1_URL, list.get(0).getUrl());
 		assertEquals(NEWS_ID_1_DATE, list.get(0).getDate());
+		assertEquals(NEWS_ID_1_TITLE, list.get(0).getTitle());
 		assertEquals(NEWS_ID_2_URL, list.get(1).getUrl());
 		assertEquals(NEWS_ID_2_DATE, list.get(1).getDate());
+		assertEquals(NEWS_ID_2_TITLE, list.get(1).getTitle());
 	}
 }

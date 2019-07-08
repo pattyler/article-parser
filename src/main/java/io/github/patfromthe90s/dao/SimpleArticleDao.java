@@ -49,14 +49,16 @@ public final class SimpleArticleDao implements ArticleDao {
 		ps.setString(1, strFrom);
 		ps.setString(2, strTo);
 		//LOGGER.info("Preapring to execute statement: [{}] using dates {} and {}", PropertiesUtil.get(PropertiesKey.SQL.GET_ARTICLE), strFrom, strTo);
-		LOGGER.info("Preapring to execute statement: [{}] using dates {} and {}", getArticleStmt, strFrom, strTo);
+		LOGGER.info("Preparing to execute statement: [{}] using dates {} and {}", getArticleStmt, strFrom, strTo);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			Article article = new Article().setUrl(rs.getString(1))
-									.setData(rs.getString(2))
-									.setDate(ZonedDateTime.of(
-												LocalDateTime.parse(rs.getString(3)),
-												TimeUtils.ZONE_UTC));
+			Article article = new Article().setSiteId(rs.getString(1))
+											.setUrl(rs.getString(2))
+											.setTitle(rs.getString(3))
+											.setData(rs.getString(4))
+											.setDate(ZonedDateTime.of(
+														LocalDateTime.parse(rs.getString(5)),
+														TimeUtils.ZONE_UTC));
 			articles.add(article);
 		}
 		
@@ -69,9 +71,11 @@ public final class SimpleArticleDao implements ArticleDao {
 	@Override
 	public void insertArticle(final Article article) throws SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, insertArticleStmt);
-		ps.setString(1, article.getUrl().toString());
-		ps.setString(2, article.getData());
-		ps.setString(3, article.getDate().toLocalDateTime().toString());
+		ps.setString(1, article.getSiteId());
+		ps.setString(2, article.getUrl());
+		ps.setString(3, article.getTitle());
+		ps.setString(4, article.getData());
+		ps.setString(5, article.getDate().toLocalDateTime().toString());
 		LOGGER.info("Preparing to execute statement: [{}] using article {}", insertArticleStmt, article);
 		ps.executeUpdate();
 	}

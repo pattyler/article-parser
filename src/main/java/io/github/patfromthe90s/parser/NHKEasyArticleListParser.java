@@ -44,13 +44,14 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 					.map(JsonElement::getAsJsonObject)
 					.forEach(o -> articles.add(
 									createFrom(o.get("news_id").getAsString(), 
-											   o.get("news_prearranged_time").getAsString())
+											   o.get("news_prearranged_time").getAsString(),
+											   o.get("title").getAsString())
 							));
 						
 		return articles;
 	}
 	
-	private Article createFrom(String articleId, String strDate) {
+	private Article createFrom(String articleId, String strDate, String title) {
 		// create the full URL using the given article Id.
 		String url = new StringBuilder(nhkBaseUrl)
 							.append(articleId)
@@ -65,7 +66,8 @@ public class NHKEasyArticleListParser implements ArticleListParser {
 		ZonedDateTime utcTime = ZonedDateTime.of(ldt, TimeUtils.ZONE_JST) // Datetimes returned in JSON always JST.
 										.withZoneSameInstant(TimeUtils.ZONE_UTC);
 		return new Article().setDate(utcTime)
-							.setUrl(url);
+							.setUrl(url)
+							.setTitle(title);
 	}
 
 }

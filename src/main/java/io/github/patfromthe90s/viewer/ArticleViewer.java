@@ -22,7 +22,7 @@ public class ArticleViewer {
 		try {
 			daoService.getArticlesBetween(from, to)
 					.stream()
-					.map(a -> a.getData())
+					.map(a -> a.getTitle())
 					.forEach(s -> { 
 						Arrays.stream(s.split("。"))
 								.forEach(LOGGER::info);

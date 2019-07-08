@@ -23,10 +23,11 @@ public class GrabberRunner implements Runner {
 	public GrabberRunner(ArticleGrabberService articleGrabberService) {
 		this.articleGrabberService = articleGrabberService;
 	}
-
+	
 	public void run() {
 		List<Article> articles = articleGrabberService.grabArticles();
 		if (articles.size() > 0) {
+			// TODO this should be one transcation
 			articleGrabberService.persist(articles);
 			articleGrabberService.updateLastUpdated();
 		}

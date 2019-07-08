@@ -49,10 +49,10 @@ public final class SimpleSiteDao implements SiteDao {
 	}
 
 	@Override
-	public ZonedDateTime getLastUpdated(final String url) throws RecordNotInDatabaseException, SQLException {
+	public ZonedDateTime getLastUpdated(final String SITE_ID) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, getLastUpdatedStmt);
-		ps.setString(1, url);
-		LOGGER.info("Preapring to execute statement: [{}] using url {}", getLastUpdatedStmt, url);
+		ps.setString(1, SITE_ID);
+		LOGGER.info("Preparing to execute statement: [{}] using str_id {}", getLastUpdatedStmt, SITE_ID);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			LocalDateTime ldt = LocalDateTime.parse(rs.getString(1));
@@ -63,10 +63,10 @@ public final class SimpleSiteDao implements SiteDao {
 	}
 	
 	@Override
-	public void updateLastUpdated(final String url) throws RecordNotInDatabaseException, SQLException {
+	public void updateLastUpdated(final String SITE_ID) throws RecordNotInDatabaseException, SQLException {
 		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, updateLastUpdatedStmt);
-		ps.setString(1, url.toString());
-		LOGGER.info("Preapring to execute statement: [{}] using url {} and date {}", updateLastUpdatedStmt, url);
+		ps.setString(1, SITE_ID);
+		LOGGER.info("Preparing to execute statement: [{}] using str_id {} and date {}", updateLastUpdatedStmt, SITE_ID);
 		final int numUpdated = ps.executeUpdate();
 		if (numUpdated < 1)
 			throw new RecordNotInDatabaseException(dbNoRecordMsg);

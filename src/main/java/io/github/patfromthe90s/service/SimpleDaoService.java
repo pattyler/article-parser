@@ -36,10 +36,10 @@ public final class SimpleDaoService implements DaoService {
 	}
 
 	@Override
-	public ZonedDateTime getLastUpdated(final String url) throws DaoServiceException {
+	public ZonedDateTime getLastUpdated(final String SITE_ID) throws DaoServiceException {
 		try {
-			LOGGER.info("Getting last updated date for {}", url);
-			return siteDao.getLastUpdated(url);
+			LOGGER.info("Getting last updated date for {}", SITE_ID);
+			return siteDao.getLastUpdated(SITE_ID);
 		} catch (RecordNotInDatabaseException | SQLException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new DaoServiceException(e);
@@ -47,10 +47,10 @@ public final class SimpleDaoService implements DaoService {
 	}
 
 	@Override
-	public void updateLastUpdated(final String url) throws DaoServiceException {
+	public void updateLastUpdated(final String SITE_ID) throws DaoServiceException {
 		try {
-			LOGGER.info("Updating last updated using URL {} and date {}", url);
-			siteDao.updateLastUpdated(url);
+			LOGGER.info("Updating last updated using str_id {} and date {}", SITE_ID);
+			siteDao.updateLastUpdated(SITE_ID);
 		} catch (RecordNotInDatabaseException | SQLException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new DaoServiceException(e);

@@ -22,10 +22,10 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleNHKEasyArticleGrabberService.class);
 	
-	@Value("${nhk.url.base}")
-	private String SITE_URL;
 	@Value("${nhk.url.json}")
 	private String JSON_URL;
+	@Value("${sql.site.id.nhk}")
+	private String SITE_ID;
 	
 	private final DaoService daoService;
 	private final SiteService siteService;
@@ -45,7 +45,7 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 		List<Article> articles = new ArrayList<>();
 		
 		try {
-			ZonedDateTime currentLastUpdated = daoService.getLastUpdated(SITE_URL);
+			ZonedDateTime currentLastUpdated = daoService.getLastUpdated(SITE_ID);
 			ZonedDateTime siteLastUpdated = siteService.getLastUpdated(JSON_URL);
 			LOGGER.debug("Checking for new articles using current date {} and site date {}", currentLastUpdated, siteLastUpdated);
 			if (siteLastUpdated.isAfter(currentLastUpdated)) {	// only request JSON if potentially new articles to grab
@@ -57,6 +57,7 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 													try {
 														String html = siteService.getHtml(article.getUrl());
 														article = articleParser.parse(article, html);
+														article.setSiteId(SITE_ID);
 													} catch (SiteServiceException e) {
 														LOGGER.error(e.getMessage(), e);
 													}
@@ -92,7 +93,7 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 	@Override
 	public void updateLastUpdated() {
 		try {
-			daoService.updateLastUpdated(SITE_URL);
+			daoService.updateLastUpdated(SITE_ID);
 		} catch (DaoServiceException e) {
 			LOGGER.error(e.getMessage(), e);
 			e.printStackTrace();
