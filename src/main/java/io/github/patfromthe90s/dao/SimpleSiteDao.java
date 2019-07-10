@@ -1,75 +1,59 @@
 package io.github.patfromthe90s.dao;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
-import io.github.patfromthe90s.util.DaoUtils;
 import io.github.patfromthe90s.util.TimeUtils;
 
 /**
- * Simple implementation of {@link SiteDao}
+ * Simple implementation of {@link SiteDao}. Delegates mostly to {@link JdbcTemplate}, including exception handling.
  * 
  * @author Patrick
  *
  */
 @Component
 public final class SimpleSiteDao implements SiteDao {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSiteDao.class);
 	
-	private final DataSource dataSource;
-	
-	@Value("${sql.get.lastUpdated}")
-	private String getLastUpdatedStmt;
-	
-	@Value("${sql.update.lastUpdated}")
-	private String updateLastUpdatedStmt;
-	
-	@Value("${messages.db.noRecord}")
-	private String dbNoRecordMsg;
+	private final JdbcTemplate JDBC_TEMPLATE;
+	private final String GET_LAST_UPDATED_STMT;
+	private final String UPDATE_LAST_UPDATED_STMT;
 	
 	/**
 	 * @param dataSource The {@link DataSource} for retrieving the database {@link Connection}.
 	 */
 	@Autowired
-	public SimpleSiteDao(final DataSource dataSource) {
-		this.dataSource = dataSource;
+	public SimpleSiteDao(DataSource dataSource, Environment environment) {
+		this.JDBC_TEMPLATE = new JdbcTemplate(dataSource);
+		this.GET_LAST_UPDATED_STMT = environment.getProperty("sql.get.lastUpdated");
+		this.UPDATE_LAST_UPDATED_STMT = environment.getProperty("sql.update.lastUpdated");
 	}
 
 	@Override
-	public ZonedDateTime getLastUpdated(final String SITE_ID) throws RecordNotInDatabaseException, SQLException {
-		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, getLastUpdatedStmt);
-		ps.setString(1, SITE_ID);
-		LOGGER.info("Preparing to execute statement: [{}] using str_id {}", getLastUpdatedStmt, SITE_ID);
-		ResultSet rs = ps.executeQuery();
-		if (rs.next()) {
-			LocalDateTime ldt = LocalDateTime.parse(rs.getString(1));
-			return ZonedDateTime.of(ldt, TimeUtils.ZONE_UTC);
-		} else {
-			throw new RecordNotInDatabaseException(dbNoRecordMsg);
-		}
+	public Optional<ZonedDateTime> getLastUpdated(String siteId) {
+		List<ZonedDateTime> zdt = JDBC_TEMPLATE.query(GET_LAST_UPDATED_STMT, 
+														new Object[] { siteId },
+														(rs, rowNum) -> {
+															LocalDateTime ldt = LocalDateTime.parse(rs.getString(1));
+															return ZonedDateTime.of(ldt, TimeUtils.ZONE_UTC);
+														});
+		
+		return zdt.isEmpty() ? Optional.empty() : Optional.of(zdt.get(0));
 	}
 	
 	@Override
-	public void updateLastUpdated(final String SITE_ID) throws RecordNotInDatabaseException, SQLException {
-		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, updateLastUpdatedStmt);
-		ps.setString(1, SITE_ID);
-		LOGGER.info("Preparing to execute statement: [{}] using str_id {} and date {}", updateLastUpdatedStmt, SITE_ID);
-		final int numUpdated = ps.executeUpdate();
-		if (numUpdated < 1)
-			throw new RecordNotInDatabaseException(dbNoRecordMsg);
+	public int updateLastUpdated(String siteId) {
+		final int NUM_UPDATED = JDBC_TEMPLATE.update(UPDATE_LAST_UPDATED_STMT, siteId);	
+		return NUM_UPDATED;
 	}
 	
 }

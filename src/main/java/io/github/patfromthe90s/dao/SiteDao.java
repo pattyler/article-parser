@@ -1,10 +1,7 @@
 package io.github.patfromthe90s.dao;
 
-import java.net.URL;
-import java.sql.SQLException;
 import java.time.ZonedDateTime;
-
-import io.github.patfromthe90s.exception.RecordNotInDatabaseException;
+import java.util.Optional;
 
 /**
  * DAO interface for accessing the Site table in the database.
@@ -17,24 +14,21 @@ public interface SiteDao {
 
 	/**
 	 * Retrieves from the database the last known time the given site was updated. <br/>
-	 * Assumes {@code url} is a valid database entry.
+	 * Assumes {@code siteId} is a valid database entry.
 	 * 
-	 * @param url {@link URL} representing site to retrieve the information from.
-	 * @return Last known time the given site was updated.
-	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
-	 * @throws SQLException If there is some underlying problem.
+	 * @param siteId The ID of the row to update (e.g. <code>"NHKEASY"</code>).
+	 * @return Last known time the given site was updated, or the empty <code>Optional</code> if no row was found.
 	 */
-	public ZonedDateTime getLastUpdated(String url) throws RecordNotInDatabaseException, SQLException;
+	public Optional<ZonedDateTime> getLastUpdated(String siteId);
 	
 	/**
-	 * Update the database row containing <code>url</code> in the <code>site</code> table and set the <code>lastUpdated</code> 
+	 * Update the database row containing <code>siteId</code> in the <code>site</code> table and set the <code>last_updated</code> 
 	 * column to equal the <code>date</code> column of the most recent article associated with this <code>url</code> in
 	 * the <code>article</code> table. 
 	 * 
-	 * @param url <code>URL</code> representing site to update.
-	 * @throws RecordNotInDatabaseException if the given {@code url} doesn't exist in the database.
-	 * @throws SQLException If there was some underlying problem.
+	 * @param siteId The ID of the row to update (e.g. <code>"NHKEASY"</code>).
+	 * @return the number of rows updated. If successful, this should only be one.
 	 */
-	public void updateLastUpdated(String url) throws RecordNotInDatabaseException, SQLException;
+	public int updateLastUpdated(String siteId);
 
 }

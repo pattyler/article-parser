@@ -1,6 +1,5 @@
 package io.github.patfromthe90s.dao;
 
-import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -19,15 +18,13 @@ public interface ArticleDao {
 	 * @param from The date to search from (inclusive).
 	 * @param to The date to search until (inclusive).
 	 * @return	Any articles written between {@code from} and {@code to}.
-	 * @throws SQLException if something went wrong.
 	 */
-	public List<Article> getArticlesBetween(ZonedDateTime from, ZonedDateTime to) throws SQLException;
+	public List<Article> getArticlesBetween(ZonedDateTime from, ZonedDateTime to);
 	
 	/**
 	 * Attempts to insert the given {@code article} into the database. No guarantees are made.
 	 * @param article The article to insert.
-	 * @throws SQLException if something went wrong
 	 */
-	public void insertArticle(Article article) throws SQLException;
+	public void insertArticle(Article article);
 	
 }

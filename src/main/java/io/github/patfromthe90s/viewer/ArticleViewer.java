@@ -1,12 +1,12 @@
 package io.github.patfromthe90s.viewer;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.patfromthe90s.exception.DaoServiceException;
+import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.service.DaoService;
 
 public class ArticleViewer {
@@ -22,12 +22,8 @@ public class ArticleViewer {
 		try {
 			daoService.getArticlesBetween(from, to)
 					.stream()
-					.map(a -> a.getTitle())
-					.forEach(s -> { 
-						Arrays.stream(s.split("。"))
-								.forEach(LOGGER::info);
-						
-					});
+					.map(Article::toString)
+					.forEach(LOGGER::info);
 		} catch (DaoServiceException e) {
 			LOGGER.error(e.getMessage(), e);
 		}

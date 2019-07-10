@@ -1,24 +1,30 @@
 package io.github.patfromthe90s.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 
 import io.github.patfromthe90s.exception.DaoServiceException;
+import io.github.patfromthe90s.exception.GrabberServiceException;
 import io.github.patfromthe90s.exception.SiteServiceException;
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.parser.ArticleListParser;
@@ -32,13 +38,16 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 	@Mock private ArticleListParser mArticleListParser;
 	@Mock private ArticleParser mArticleParser;
 	
+	@Autowired
+	private Environment environment;
+	
 	private ArticleGrabberService articleGrabberService;
 	
 	@BeforeEach
 	public void setup() throws DaoServiceException {
 		MockitoAnnotations.initMocks(this);
 		doNothing().when(mDaoService).insertArticle(any(Article.class));
-		articleGrabberService = new SimpleNHKEasyArticleGrabberService(mSiteService, mDaoService, mArticleListParser, mArticleParser);
+		articleGrabberService = new SimpleNHKEasyArticleGrabberService(mSiteService, mDaoService, mArticleListParser, mArticleParser, environment);
 	}
 	
 	@Nested
@@ -125,7 +134,6 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 		
 		@Test
 		@DisplayName("When parsing articles list, then parsing not affected")
-		
 		public void isSiteServiceException_thenListStillParsed() throws SiteServiceException, DaoServiceException {
 			ZonedDateTime currentLastUpdated = ZonedDateTime.now().minusDays(10);
 			ZonedDateTime siteLastUpdated = ZonedDateTime.now().minusDays(1);
@@ -161,6 +169,17 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 			assertEquals(article3, returnedArticles.get(1));
 		}
 		
+		@DisplayName("When DaoServiceException thrown, then mapped to GrabberServiceException, which triggers transaction rollback")
+		@Test
+		public void whenDaoServiceExceptionThrown_thenTransactionRollbackExceptionThrown() throws DaoServiceException {
+			List<Article> articles = new ArrayList<>();
+			articles.add(new Article());
+			doThrow(DaoServiceException.class).when(mDaoService).insertArticle(any(Article.class));
+			assertThrows(GrabberServiceException.class, () -> articleGrabberService.persist(articles));
+			
+			doThrow(DaoServiceException.class).when(mDaoService).updateLastUpdated(anyString());
+			assertThrows(GrabberServiceException.class, () -> articleGrabberService.updateLastUpdated());
+		}
 	}
-	
+
 }

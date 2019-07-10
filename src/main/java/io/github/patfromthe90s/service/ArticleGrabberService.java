@@ -2,6 +2,7 @@ package io.github.patfromthe90s.service;
 
 import java.util.List;
 
+import io.github.patfromthe90s.exception.GrabberServiceException;
 import io.github.patfromthe90s.model.Article;
 
 /**
@@ -24,16 +25,20 @@ public interface ArticleGrabberService {
 	public List<Article> grabArticles();
 	
 	/**
+	 * Given a <code>List</code> of {@link Article}s, save them to the database.
 	 * 
 	 * @param articleLinkDates
-	 * @return
+	 * @throws GrabberServiceException useful for rolling back a transaction.
+	 * 
 	 */
-	public void persist(List<Article> articles);
+	public void persist(List<Article> articles) throws GrabberServiceException;
 	
 	/**
 	 * Update the database site table to contain the most recent article as lastUpdated. <br/>
 	 * This should be called directly after <code>grabAndPersist</code>
+	 * 
+	 * @throws GrabberServiceException useful for rolling back a transaction.
 	 */
-	public void updateLastUpdated();
+	public void updateLastUpdated() throws GrabberServiceException;
 	
 }

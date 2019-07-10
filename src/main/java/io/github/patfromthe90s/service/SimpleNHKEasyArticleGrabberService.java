@@ -9,9 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.github.patfromthe90s.exception.DaoServiceException;
+import io.github.patfromthe90s.exception.GrabberServiceException;
 import io.github.patfromthe90s.exception.SiteServiceException;
 import io.github.patfromthe90s.model.Article;
 import io.github.patfromthe90s.parser.ArticleListParser;
@@ -22,10 +26,8 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleNHKEasyArticleGrabberService.class);
 	
-	@Value("${nhk.url.json}")
-	private String JSON_URL;
-	@Value("${sql.site.id.nhk}")
-	private String SITE_ID;
+	private final String JSON_URL;
+	private final String SITE_ID;
 	
 	private final DaoService daoService;
 	private final SiteService siteService;
@@ -33,7 +35,11 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 	private final ArticleParser articleParser;
 	
 	@Autowired
-	public SimpleNHKEasyArticleGrabberService(SiteService siteService, DaoService daoService, ArticleListParser articleListParser, ArticleParser articleParser) {
+	public SimpleNHKEasyArticleGrabberService(SiteService siteService, DaoService daoService, 
+												ArticleListParser articleListParser, ArticleParser articleParser,
+												Environment environment) {
+		this.JSON_URL = environment.getProperty("nhk.url.json");
+		this.SITE_ID = environment.getProperty("sql.site.id.nhk");
 		this.daoService = daoService;
 		this.siteService = siteService;
 		this.articleListParser = articleListParser;
@@ -59,6 +65,8 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 														article = articleParser.parse(article, html);
 														article.setSiteId(SITE_ID);
 													} catch (SiteServiceException e) {
+														// can't throw exception in Lambda, so log message, and let filter() stage deal with 
+														// null article.getData()
 														LOGGER.error(e.getMessage(), e);
 													}
 													
@@ -69,34 +77,31 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 			}
 		} catch (SiteServiceException | DaoServiceException e) {
 			LOGGER.error(e.getMessage(), e);
-			e.printStackTrace();
 		}
 		
 		LOGGER.info("Grabbed {} articles", articles.size());
-		LOGGER.debug("Grabbed articles are: {}", articles);
 		return articles;
 	}
 
+	@Transactional(propagation=Propagation.MANDATORY, rollbackFor=GrabberServiceException.class)
 	@Override
-	public void persist(List<Article> articles) {
-		
-		articles.stream()
-				.forEach(article -> {
-					try {
-						daoService.insertArticle(article);
-					} catch (DaoServiceException e) {
-						LOGGER.error(e.getMessage(), e);
-					}
-				});
+	public void persist(List<Article> articles) throws GrabberServiceException {
+		try {
+			// Cannot throw checked exception from Streams, so use iteration.
+			for (Article article : articles)
+				daoService.insertArticle(article);
+		} catch (DaoServiceException e) {
+			throw new GrabberServiceException(e);
+		}
 	}
 
+	@Transactional(propagation=Propagation.MANDATORY, rollbackFor=GrabberServiceException.class)
 	@Override
-	public void updateLastUpdated() {
+	public void updateLastUpdated() throws GrabberServiceException{
 		try {
 			daoService.updateLastUpdated(SITE_ID);
 		} catch (DaoServiceException e) {
-			LOGGER.error(e.getMessage(), e);
-			e.printStackTrace();
+			throw new GrabberServiceException(e);
 		}
 	}
 

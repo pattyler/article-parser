@@ -1,7 +1,7 @@
 package io.github.patfromthe90s.runner;
 
 /**
- * Marker interface to mark a runnable class that may be called by {@link SpringApplicationRunner}.
+ * Marker interface to mark a runnable class to be injected into, and maybe called by, {@link SpringApplicationRunner}.
  * 
  * @author Patrick
  *
@@ -9,7 +9,7 @@ package io.github.patfromthe90s.runner;
 public interface Runner {
 
 	/**
-	 * The code to be called and run.
+	 * The runnable code.
 	 */
 	public void run();
 	

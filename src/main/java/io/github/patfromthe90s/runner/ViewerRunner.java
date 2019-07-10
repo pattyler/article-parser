@@ -24,7 +24,7 @@ public class ViewerRunner implements Runner {
 	}
 	
 	public void run() {
-		articleViewer.printArticles(ZonedDateTime.now().minusDays(2), ZonedDateTime.now());
+		articleViewer.printArticles(ZonedDateTime.now().minusDays(5), ZonedDateTime.now());
 	}
 
 }

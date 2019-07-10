@@ -1,67 +1,64 @@
 package io.github.patfromthe90s.dao;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import io.github.patfromthe90s.model.Article;
-import io.github.patfromthe90s.util.DaoUtils;
 import io.github.patfromthe90s.util.TimeUtils;
 
-@Component
-public final class SimpleArticleDao implements ArticleDao {
+/**
+ * Simple implementation of {@link ArticleDao}. Delegates mostly to {@link JdbcTemplate}, including exception handling.
+ * @author Patrick
+ *
+ */
+@Repository
+public class SimpleArticleDao implements ArticleDao {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleArticleDao.class);
-	
-	private final DataSource dataSource;
-	
-	@Value("${sql.get.article}")
-	private String getArticleStmt;
-	
-	@Value("${sql.insert.article}")
-	private String insertArticleStmt;
+	private final JdbcTemplate jdbcTemplate;
+	private final String GET_ARTICLES_STMT;
+	private final String INSERT_ARTICLES_STMT;
 	
 	@Autowired
-	public SimpleArticleDao(final DataSource dataSource) {
-		this.dataSource = dataSource;
+	public SimpleArticleDao(DataSource dataSource, Environment environment) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		this.GET_ARTICLES_STMT = environment.getProperty("sql.get.article");
+		this.INSERT_ARTICLES_STMT = environment.getProperty("sql.insert.article");
 	}
 
 	@Override
-	public List<Article> getArticlesBetween(final ZonedDateTime from, final ZonedDateTime to) throws SQLException {
-		List<Article> articles = new ArrayList<>();
-		String strFrom = from.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		String strTo = to.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		//PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, PropertiesUtil.get(PropertiesKey.SQL.GET_ARTICLE));
-		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, getArticleStmt);
-		ps.setString(1, strFrom);
-		ps.setString(2, strTo);
-		//LOGGER.info("Preapring to execute statement: [{}] using dates {} and {}", PropertiesUtil.get(PropertiesKey.SQL.GET_ARTICLE), strFrom, strTo);
-		LOGGER.info("Preparing to execute statement: [{}] using dates {} and {}", getArticleStmt, strFrom, strTo);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			Article article = new Article().setSiteId(rs.getString(1))
-											.setUrl(rs.getString(2))
-											.setTitle(rs.getString(3))
-											.setData(rs.getString(4))
-											.setDate(ZonedDateTime.of(
-														LocalDateTime.parse(rs.getString(5)),
-														TimeUtils.ZONE_UTC));
-			articles.add(article);
-		}
+	public List<Article> getArticlesBetween(final ZonedDateTime from, final ZonedDateTime to) {
+		final String STR_FROM = from.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+		final String STR_TO = to.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		
+		List<Article> articles =  jdbcTemplate.query(GET_ARTICLES_STMT,
+									new Object[] { STR_FROM, STR_TO },
+									new RowMapper<Article>() {
+										@Override
+										public Article mapRow(ResultSet rs, int rowNum) throws SQLException {
+											Article article = new Article().setSiteId(rs.getString(1))
+													.setUrl(rs.getString(2))
+													.setTitle(rs.getString(3))
+													.setData(rs.getString(4))
+													.setDate(ZonedDateTime.of(
+																LocalDateTime.parse(rs.getString(5)),
+																TimeUtils.ZONE_UTC));
+											return article;
+										}
+								
+							});
 		return articles;
 	}
 
@@ -69,15 +66,13 @@ public final class SimpleArticleDao implements ArticleDao {
 	 * Simple insert that does not guarantee or alert if the insert failed.
 	 */
 	@Override
-	public void insertArticle(final Article article) throws SQLException {
-		PreparedStatement ps = DaoUtils.getPreparedStatement(dataSource, insertArticleStmt);
-		ps.setString(1, article.getSiteId());
-		ps.setString(2, article.getUrl());
-		ps.setString(3, article.getTitle());
-		ps.setString(4, article.getData());
-		ps.setString(5, article.getDate().toLocalDateTime().toString());
-		LOGGER.info("Preparing to execute statement: [{}] using article {}", insertArticleStmt, article);
-		ps.executeUpdate();
+	public void insertArticle(final Article article) {
+		jdbcTemplate.update(INSERT_ARTICLES_STMT, article.getSiteId(),
+												article.getUrl(),
+												article.getTitle(),
+												article.getData(),
+												article.getDate().toLocalDateTime().toString()); // LocalDateTime for formatting purposes, don't need
+																								 // time-zone information.
 	}
 
 }

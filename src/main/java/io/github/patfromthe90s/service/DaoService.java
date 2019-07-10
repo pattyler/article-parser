@@ -17,24 +17,25 @@ public interface DaoService {
 	
 	/**
 	 * Retrieves the last known time the given site was updated. <br/>
-	 * Assumes {@code url} is a valid database entry.
+	 * Assumes <code>siteId</code> is a valid database entry.
 	 * 
-	 * @param url {@link URL} representing site to retrieve the information from.
+	 * @param siteId <code>ID</code> of site to retrieve the information from.
 	 * @return Last known time the given site was updated.
-	 * @throws DaoServiceException if the {@code url} doesn't exist in the database, or if something else
-	 * went wrong related to the database.
+	 * @throws DaoServiceException if the <code>siteId</code> doesn't exist in the database
 	 */
-	public ZonedDateTime getLastUpdated(String url) throws DaoServiceException;
+	public ZonedDateTime getLastUpdated(String siteId) throws DaoServiceException;
 	
 	
 	/**
+	 * Update the database row containing <code>siteId</code> in the <code>site</code> table and set the <code>last_updated</code> 
+	 * column to equal the <code>date</code> column of the most recent article associated with this <code>url</code> in
+	 * the <code>article</code> table. 
 	 * 
-	 * @param url <code>URL</code> representing site to update.
-	 * @throws DaoServiceException if the {@code url} doesn't exist in the database, or if something else
-	 * went wrong related to the database.
+	 * @param siteId <code>ID</code> of site row to update.
+	 * @throws DaoServiceException if the <code>siteId</code> doesn't exist in the database
 	 * @see {@link SiteService}
 	 */
-	public void updateLastUpdated(String url) throws DaoServiceException;
+	public void updateLastUpdated(String siteId) throws DaoServiceException;
 	
 	/**
 	 * Returns any articles that were written between {@code from} (inclusive) and {@code to} (inclusive). <br/>

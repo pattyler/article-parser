@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * The single {@link CommandLineRunner} for this application. This should call and run any desired {@link Runner}s.
+ * The single {@link CommandLineRunner} for this application. This should call and run the injected {@link Runner}s.
  * @author Patrick
  *
  */
