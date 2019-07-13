@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.patfromthe90s.backend.exception.GrabberServiceException;
 import io.github.patfromthe90s.backend.model.Article;
+import io.github.patfromthe90s.grabber.exception.GrabberServiceException;
 import io.github.patfromthe90s.grabber.service.ArticleGrabberService;
 
 /**

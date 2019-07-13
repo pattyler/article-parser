@@ -17,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -27,10 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql("classpath:schema.sql")
 @Sql("classpath:data.sql")
 public class SimpleSiteDaoTest {
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
+		
 	@Autowired
 	private DataSource dataSource;
 	

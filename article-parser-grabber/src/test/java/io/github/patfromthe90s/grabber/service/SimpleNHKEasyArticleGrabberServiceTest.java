@@ -20,29 +20,29 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
 import io.github.patfromthe90s.backend.exception.DaoServiceException;
-import io.github.patfromthe90s.backend.exception.GrabberServiceException;
-import io.github.patfromthe90s.backend.exception.SiteServiceException;
 import io.github.patfromthe90s.backend.model.Article;
-import io.github.patfromthe90s.backend.parser.ArticleListParser;
-import io.github.patfromthe90s.backend.parser.ArticleParser;
 import io.github.patfromthe90s.backend.service.DaoService;
-import io.github.patfromthe90s.backend.service.SiteService;
+import io.github.patfromthe90s.grabber.config.TestConfig;
+import io.github.patfromthe90s.grabber.exception.GrabberServiceException;
+import io.github.patfromthe90s.grabber.exception.SiteServiceException;
+import io.github.patfromthe90s.grabber.parser.ArticleListParser;
+import io.github.patfromthe90s.grabber.parser.ArticleParser;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(TestConfig.class)
 public class SimpleNHKEasyArticleGrabberServiceTest {
 	
 	@Mock private DaoService mDaoService;
 	@Mock private SiteService mSiteService;
 	@Mock private ArticleListParser mArticleListParser;
 	@Mock private ArticleParser mArticleParser;
-	
-	@Autowired
-	private Environment environment;
+	@Autowired private Environment environment;
 	
 	private ArticleGrabberService articleGrabberService;
 	
@@ -53,10 +53,10 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 		articleGrabberService = new SimpleNHKEasyArticleGrabberService(mSiteService, mDaoService, mArticleListParser, mArticleParser, environment);
 	}
 	
-	@Nested
-	@DisplayName("When there are no articles to grab")
-	class WhenNoArticles {
-		
+//	@Nested
+//	@DisplayName("When there are no articles to grab")
+//	class WhenNoArticles {
+//		
 			@Test
 			@DisplayName("When SiteLastUpdated earlier than or same as CurrentLastUpdated, then empty list returned")
 			public void thenEmptyList() throws SiteServiceException, DaoServiceException {
@@ -70,11 +70,11 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 				assertEquals(0, articleGrabberService.grabArticles().size());
 			}
 							
-	}
+//	}
 	
-	@Nested
-	@DisplayName("When there are articles to grab")
-	class WhenArticles {
+//	@Nested
+//	@DisplayName("When there are articles to grab")
+//	class WhenArticles {
 		
 		@Test
 		@DisplayName("When SiteLastUpdated later than CurrentLastUpdated, then a populated list is returned")
@@ -116,7 +116,7 @@ public class SimpleNHKEasyArticleGrabberServiceTest {
 			assertEquals(1, articleGrabberService.grabArticles().size());
 		}
 		
-	}
+//	}
 	
 	@Nested
 	@DisplayName("When checked exception thrown")

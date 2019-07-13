@@ -9,9 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import io.github.patfromthe90s.backend.runner.Runner;
-import io.github.patfromthe90s.backend.runner.SpringApplicationRunner;
-
 /**
  * The single {@link CommandLineRunner} for this application. This should call and run the injected {@link Runner}s.
  * @author Patrick

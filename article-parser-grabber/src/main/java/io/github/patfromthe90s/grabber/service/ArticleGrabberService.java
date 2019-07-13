@@ -2,8 +2,8 @@ package io.github.patfromthe90s.grabber.service;
 
 import java.util.List;
 
-import io.github.patfromthe90s.backend.exception.GrabberServiceException;
 import io.github.patfromthe90s.backend.model.Article;
+import io.github.patfromthe90s.grabber.exception.GrabberServiceException;
 
 /**
  * Service for grabbing articles from a web-site. </br>

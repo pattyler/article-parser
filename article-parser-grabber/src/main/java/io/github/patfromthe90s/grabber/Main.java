@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Patrick
  *
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages="io.github.patfromthe90s")
 public class Main {
 		
 	public static void main(String[] args)  {

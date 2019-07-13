@@ -14,13 +14,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.github.patfromthe90s.backend.exception.DaoServiceException;
-import io.github.patfromthe90s.backend.exception.GrabberServiceException;
-import io.github.patfromthe90s.backend.exception.SiteServiceException;
 import io.github.patfromthe90s.backend.model.Article;
-import io.github.patfromthe90s.backend.parser.ArticleListParser;
-import io.github.patfromthe90s.backend.parser.ArticleParser;
 import io.github.patfromthe90s.backend.service.DaoService;
-import io.github.patfromthe90s.backend.service.SiteService;
+import io.github.patfromthe90s.grabber.exception.GrabberServiceException;
+import io.github.patfromthe90s.grabber.exception.SiteServiceException;
+import io.github.patfromthe90s.grabber.parser.ArticleListParser;
+import io.github.patfromthe90s.grabber.parser.ArticleParser;
 import io.github.patfromthe90s.grabber.service.ArticleGrabberService;
 import io.github.patfromthe90s.grabber.service.SimpleNHKEasyArticleGrabberService;
 
@@ -42,7 +41,7 @@ public class SimpleNHKEasyArticleGrabberService implements ArticleGrabberService
 												ArticleListParser articleListParser, ArticleParser articleParser,
 												Environment environment) {
 		this.JSON_URL = environment.getProperty("nhk.url.json");
-		this.SITE_ID = environment.getProperty("sql.site.id.nhk");
+		this.SITE_ID = environment.getProperty("db.id.site.nhk");
 		this.daoService = daoService;
 		this.siteService = siteService;
 		this.articleListParser = articleListParser;
