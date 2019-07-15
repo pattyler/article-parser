@@ -82,3 +82,41 @@ This module does not take care of parsing semantic meaning. It is only concerned
 
 ##### article-parser-viewer
 Not for production. For use during development for checking the database or retrieving any information you wish programatically.
+
+### Setup
+##### Requirements
+Before following the setup instructions, please ensure you have the following:
+- [Maven](https://maven.apache.org/)
+- [Java 8+](https://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- [sqlite3](https://sqlite.org/index.html)
+
+##### Setup the environment
+Currently, as the project is still in early development, getting a development environment set up is a bit messy, but can be achieved by running the following commands:
+
+```shell
+git clone https://github.com/patfromthe90s/article-parser.git
+cd article-parser
+mkdir db
+mkdir article-parser-backend/db
+sudo mkdir /var/log/article-parser
+sudo chmod 776 /var/log/article-parser
+sudo chgrp $USER /var/log/article-parser
+sqlite3 db/test.db
+sqlite> .read article-parser-backend/src/main/resources/init-db.sql
+sqlite> .quit
+mvn package
+```
+
+The `mkdir`, `chmod`, and `chgrp` commands are to ensure the appropriate directory structure is setup. This process will be changed in the future.
+
+The `sqlite` commands are to ensure the development database is initialised, ready to be used immediately by `article-parser-grabber`.
+
+##### Run the application
+To run the application, first make sure you are in the `article-parser` directory (the parent module). Then, run the following to populate the database with a few records and see the output:
+
+```shell
+cd article-parser-grabber/target
+java -jar article-parser-grabber.jar
+cd ../../article-parser-viewer/target
+java -jar article-parser-viewer -from 10
+```
