@@ -6,8 +6,8 @@
 				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
 		<RollingFile name="MonthlyRollingFile"
-			fileName="${sys:logBaseDir:-/var/logs/}article-parser/article-parser-grabber.log"
-			filePattern="${sys:logBaseDir:-/var/logs/}$${date:yyyy}/app-%d{MM-yyyy}-%i.log">
+			fileName="${sys:logBaseDir:-/var/log/}article-parser/article-parser-grabber.log"
+			filePattern="${sys:logBaseDir:-/var/log/}$${date:yyyy}/app-%d{MM-yyyy}-%i.log">
 			<PatternLayout
 				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
 			<Policies>
