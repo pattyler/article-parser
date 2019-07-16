@@ -90,11 +90,11 @@ Before following the setup instructions, please ensure you have the following:
 - [Java 8+](https://www.oracle.com/technetwork/java/javase/downloads/index.html)
 - [sqlite3](https://sqlite.org/index.html)
 
-##### Setup the environment
+##### Set up the environment
 Currently, as the project is still in early development, getting a development environment set up is a bit messy, but can be achieved by running the following commands:
 
 ```shell
-git clone https://github.com/patfromthe90s/article-parser.git
+git clone https://github.com/pattyler/article-parser.git
 cd article-parser
 mkdir db
 mkdir article-parser-backend/db
@@ -107,7 +107,7 @@ sqlite> .quit
 mvn package
 ```
 
-The `mkdir`, `chmod`, and `chgrp` commands are to ensure the appropriate directory structure is setup. This process will be changed in the future.
+The `mkdir`, `chmod`, and `chgrp` commands are to ensure the appropriate directory structure is set up. This process will be changed in the future.
 
 The `sqlite` commands are to ensure the development database is initialised, ready to be used immediately by `article-parser-grabber`.
 
